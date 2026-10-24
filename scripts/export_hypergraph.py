@@ -14,7 +14,8 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 from confuzz.groundtruth import ground_truth
 from confuzz.repair import Action, apply_actions
-from confuzz.sim import simulate
+from confuzz.domain import simulate
+from confuzz.session import load_world
 from confuzz.world import demo_world
 
 def edges(world, ref=None):
@@ -32,7 +33,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--state", default=None)
 ap.add_argument("--out", default=str(ROOT / "experiments" / "results" / "hypergraph_demo.json"))
 a = ap.parse_args()
-w = demo_world()
+w = load_world(json.loads(Path(a.state).read_text())["world_id"]) if a.state else demo_world()
 hidden, gt0 = edges(w)
 stages = [{"id": "hidden", "title": "Hidden failure structure (exhaustive, evaluator only)", "edges": hidden}]
 source = "scripted"

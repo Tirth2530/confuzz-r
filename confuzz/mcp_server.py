@@ -56,16 +56,26 @@ def _run(fn, *a, **k) -> str:
         return json.dumps({"error": "RULE_VIOLATION", "message": str(e)})
 
 
+def _spec(s: Session) -> dict:
+    from .domain import domain_name
+    w = s.base_world()
+    return {"domain": domain_name(w), "phase": s.s["phase"], "discovery_budget": f"{s.s['used']}/{s.s['budget']}",
+            "critic_budget": f"{s.s['attack_used']}/{s.s['attack_budget']}",
+            "applied_repairs": s.s["applied"], "spec": w.public_spec()}
+
+
+@mcp.tool(annotations=READ)
+def get_system() -> str:
+    """The live system under verification (domain: conference schedule or inventory network): its
+    entities, the 8 atomic disruptions, the operations playbook, constraint definitions, current phase
+    and budgets. Never contains test results you have not paid for."""
+    return _run(_spec)
+
+
 @mcp.tool(annotations=READ)
 def get_conference() -> str:
-    """Conference spec (rooms, sessions, speakers, zones, travel, AV, step-free needs), the 8 atomic
-    disruptions, the operations playbook, constraint definitions, current phase and budgets.
-    Never contains test results you have not paid for."""
-    def f(s: Session):
-        return {"phase": s.s["phase"], "discovery_budget": f"{s.s['used']}/{s.s['budget']}",
-                "critic_budget": f"{s.s['attack_used']}/{s.s['attack_budget']}",
-                "applied_repairs": s.s["applied"], "spec": s.base_world().public_spec()}
-    return _run(f)
+    """Alias of get_system (kept for compatibility)."""
+    return _run(_spec)
 
 
 @mcp.tool(annotations=SIM)
@@ -115,8 +125,10 @@ def propose_repair(failure_ids: list[str], strategy_steps: list[dict[str, Any]],
                    previous_repair_id: str = "", counterexample: list[str] | None = None,
                    diagnosis: str = "", what_changed_in_my_reasoning: str = "") -> str:
     """BLUE: propose a repair strategy for one or more failures. strategy_steps is a list of
-    {type, session?, session2?, room?, slot?} with type in MOVE_SESSION, SWAP_ROOMS, SHIFT_SESSION,
-    ACTIVATE_STANDBY, DO_NOTHING. Leave fields out to let the deterministic solver choose the
+    {type, ...fields}. Conference types: MOVE_SESSION, SWAP_ROOMS, SHIFT_SESSION, ACTIVATE_STANDBY
+    (fields session, session2, room, slot). Inventory types: TRANSFER_STOCK (sku, src, dst, qty in 100/200/400),
+    EXPEDITE_ORDER (sku, site), RENT_COLD_STORAGE (site), DUAL_SOURCE (sku), RAISE_SAFETY_STOCK (sku, site, qty).
+    DO_NOTHING in both. Leave fields out to let the deterministic solver choose the
     cheapest concrete action of that type that fixes the target(s). Returns the instantiated
     actions, cost, and a same-condition before/after on each target.
     If any earlier repair was rejected you MUST fill previous_repair_id, counterexample,
@@ -171,7 +183,8 @@ def get_trace() -> str:
 
 @mcp.tool(annotations=DESTRUCTIVE)
 def reset_session(world_id: str = "demo", budget: int = 20, attack_budget: int = 10, seed: int = 0) -> str:
-    """Start a fresh experiment session (discards current session state)."""
+    """Start a fresh experiment session (discards current session state).
+    world_id: "demo" (conference) or "inventory" (regional distributor network)."""
     def f(s: Session):
         n = Session.new(world_id, budget, attack_budget, seed)
         s.s = n.s

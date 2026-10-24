@@ -19,7 +19,7 @@ import numpy as np
 from scipy.stats import beta
 
 from .repair import verify_exact
-from .sim import simulate
+from .domain import noise_keys, simulate
 from .world import World
 
 
@@ -45,7 +45,7 @@ def sampled_draws(world: World, n: int, seed: int, noise: float):
     ids = world.disruption_ids
     for _ in range(n):
         p = frozenset(d for d in ids if rng.random() < 0.5)
-        dn = {s.id: rng.uniform(1 - noise, 1 + noise) for s in world.sessions}
+        dn = {k: rng.uniform(1 - noise, 1 + noise) for k in noise_keys(world)}
         yield p, dn
 
 

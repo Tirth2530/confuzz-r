@@ -1,5 +1,11 @@
 # CONFUZZ-R
 
+**Prove-before-apply for AI operations agents.** When an agent wants to change a live system, CONFUZZ-R
+makes it reproduce the incident, propose a fix, survive an attack by its own Critic, pass exact
+verification, and only then reach a human approval gate in TrueForge. Working today in two domains on
+one engine: conference operations and a regional inventory network. Vision and roadmap: `VISION.md`.
+
+
 An adversarial verification engine for conference operations. OpenAI agents running on TrueForge
 search for **interaction failures** (disruptions that are harmless alone but break the schedule
 together), propose repairs, attack their own repairs, and stop at a human approval boundary.

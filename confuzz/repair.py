@@ -22,7 +22,7 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 
 from .space import all_perturbations
-from .sim import simulate
+from .domain import simulate
 from .world import Session, World
 
 ACTION_TYPES = ("MOVE_SESSION", "SWAP_ROOMS", "SHIFT_SESSION", "ACTIVATE_STANDBY", "DO_NOTHING")
@@ -36,11 +36,19 @@ class Action:
     session2: str | None = None
     room: str | None = None
     slot: int | None = None
+    sku: str | None = None      # inventory domain fields
+    src: str | None = None
+    dst: str | None = None
+    qty: int | None = None
+    site: str | None = None
 
     def to_dict(self) -> dict:
         return {k: v for k, v in self.__dict__.items() if v is not None}
 
     def describe(self, world: World) -> str:
+        if getattr(world, "domain", "") == "inventory":
+            from .inventory import describe
+            return describe(world, self)
         if self.type == "MOVE_SESSION":
             return f"move {self.session} to room {self.room}"
         if self.type == "SWAP_ROOMS":
@@ -52,7 +60,17 @@ class Action:
         return "do nothing"
 
 
+def action_types(world) -> tuple:
+    if getattr(world, "domain", "") == "inventory":
+        from .inventory import ACTION_TYPES as T
+        return T
+    return ACTION_TYPES
+
+
 def action_cost(world: World, a: Action) -> float:
+    if getattr(world, "domain", "") == "inventory":
+        from .inventory import action_cost as f
+        return f(world, a)
     if a.type == "ACTIVATE_STANDBY":
         return world.room(a.room).standby_cost
     return BASE_COST[a.type]
@@ -60,6 +78,9 @@ def action_cost(world: World, a: Action) -> float:
 
 def apply_action(world: World, a: Action) -> World:
     """Return the patched world. Raises ValueError if the action is invalid."""
+    if getattr(world, "domain", "") == "inventory":
+        from .inventory import apply_action as f
+        return f(world, a)
     occupied = {(s.room, s.slot): s.id for s in world.sessions}
     usable = {r.id for r in world.usable_rooms()}
     if a.type == "DO_NOTHING":
@@ -102,6 +123,9 @@ def apply_actions(world: World, actions: list[Action]) -> World:
 
 def concrete_actions(world: World, strategy: dict) -> list[Action]:
     """All concrete actions consistent with a (possibly partial) strategy."""
+    if getattr(world, "domain", "") == "inventory":
+        from .inventory import concrete_actions as f
+        return f(world, strategy, Action)
     t = strategy.get("type")
     if t not in ACTION_TYPES:
         raise ValueError(f"type must be one of {ACTION_TYPES}")

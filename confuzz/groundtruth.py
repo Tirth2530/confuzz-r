@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 from itertools import combinations
 
-from .sim import simulate
+from .domain import simulate
 from .world import World
 
 
@@ -52,7 +52,7 @@ _CACHE: dict[str, GroundTruth] = {}
 
 
 def ground_truth(world: World) -> GroundTruth:
-    key = world.id + "|" + ",".join(sorted(world.active_standby)) + "|" + str(hash(world.sessions))
+    key = f"{world.id}|{hash(world)}"  # frozen dataclasses: hash covers the full world state (any domain)
     if key not in _CACHE:
         out = outcomes(world)
         _CACHE[key] = GroundTruth(

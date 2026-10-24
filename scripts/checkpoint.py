@@ -2,7 +2,8 @@
 
   python scripts/checkpoint.py status              # phase, budgets, repairs, applied, state fingerprint
   python scripts/checkpoint.py prepare-verified    # SCRIPTED state with R1 rejected and R2 verified (approval test)
-  python scripts/checkpoint.py reset               # fresh demo session
+  python scripts/checkpoint.py prepare-inventory   # SCRIPTED inventory state (R1 rejected, R2 verified)
+  python scripts/checkpoint.py reset [inventory]   # fresh demo (conference) or inventory session
 
 The fingerprint hashes everything except the event log, so `status` before and after a Deny must
 print the same fingerprint, and after Allow the applied list must contain the repair exactly once.
@@ -57,9 +58,33 @@ def prepare_verified():
     status()
 
 
-def reset():
-    s = Session.new("demo", budget=20, attack_budget=10); s.save(); status()
+def prepare_inventory():
+    """SCRIPTED inventory state: formula incident, 200-unit transfer rejected by a power-outage attack,
+    dual-sourcing verified."""
+    s = Session.new("inventory", budget=20, attack_budget=10)
+    s.s["prepared_by_script"] = True
+    s.event("SCRIPTED_PREP", "notice", text="events until 'prep_done' were produced by scripts/checkpoint.py, not by an agent")
+    s.query(["D1", "D5", "D8"], "test", "SCRIPTED_PREP", "prep")
+    s.minimize(["D1", "D5", "D8"], actor="SCRIPTED_PREP")
+    s.propose_repair(["F1"], [{"type": "TRANSFER_STOCK", "sku": "FOR", "src": "N", "dst": "H", "qty": 200}], "prep", None)
+    s.attack("R1", ["D2"], "prep", "storage")
+    s.propose_repair(["F1"], [{"type": "DUAL_SOURCE", "sku": "FOR"}], "prep",
+                     {"previous_repair_id": "R1", "counterexample": ["D2"], "diagnosis": "prep", "what_changed_in_my_reasoning": "prep"})
+    s.attack("R2", ["D2", "D4"], "prep", "cold_chain")
+    v = s.verify("R2")
+    s.event("SCRIPTED_PREP", "prep_done")
+    s.save()
+    print("prepared:", v["status"], "for R2; R1 is", s.repair("R1")["status"])
+    status()
+
+
+def reset(world: str = "demo"):
+    s = Session.new(world, budget=20, attack_budget=10); s.save(); status()
 
 
 if __name__ == "__main__":
-    {"status": status, "prepare-verified": prepare_verified, "reset": reset}[sys.argv[1] if len(sys.argv) > 1 else "status"]()
+    cmd = sys.argv[1] if len(sys.argv) > 1 else "status"
+    if cmd == "reset":
+        reset(sys.argv[2] if len(sys.argv) > 2 else "demo")
+    else:
+        {"status": status, "prepare-verified": prepare_verified, "prepare-inventory": prepare_inventory}[cmd]()

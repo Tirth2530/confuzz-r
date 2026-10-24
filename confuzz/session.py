@@ -19,9 +19,9 @@ from dataclasses import asdict
 from pathlib import Path
 
 from .certificate import raw_evidence, risk_certificate
-from .repair import ACTION_TYPES, Action, apply_actions, instantiate_plan
+from .repair import Action, action_types, apply_actions, instantiate_plan
 from .search import AdaptiveGroupTesting, SemanticPrior, candidates as _candidates, Oracle
-from .sim import simulate
+from .domain import simulate
 from .world import World, demo_world, generate_world
 
 STATE_PATH = Path(os.environ.get("CONFUZZ_STATE", Path(__file__).resolve().parent.parent / "runs" / "state.json"))
@@ -34,6 +34,9 @@ class RuleViolation(Exception):
 def load_world(world_id: str) -> World:
     if world_id == "demo":
         return demo_world()
+    if world_id == "inventory":
+        from .inventory import demo_inventory_world
+        return demo_inventory_world()
     if world_id.startswith("gen-"):
         w = generate_world(int(world_id[4:]))
         if w is None:
@@ -239,8 +242,8 @@ class Session:
             raise RuleViolation("give at least one strategy step")
         base = self.base_world()
         for st in steps:
-            if st.get("type") not in ACTION_TYPES:
-                raise RuleViolation(f"step type must be one of {ACTION_TYPES}")
+            if st.get("type") not in action_types(base):
+                raise RuleViolation(f"step type must be one of {action_types(base)}")
         inst = instantiate_plan(base, targets, steps)
         checks = inst.checks
         if not inst.plan:

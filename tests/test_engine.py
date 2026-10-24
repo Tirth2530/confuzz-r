@@ -181,8 +181,38 @@ class TestEvidence(unittest.TestCase):
         self.assertAlmostEqual(sum(r["fails_after"] for r in d) / len(d), c["failure_rate_after"], places=4)
 
 
+class TestInventoryDomain(unittest.TestCase):
+    def test_singles_pass_and_third_order_emerges(self):
+        from confuzz.domain import simulate as dsim
+        from confuzz.inventory import demo_inventory_world
+        w = demo_inventory_world()
+        self.assertFalse(dsim(w, []).critical)
+        for d in w.disruption_ids:
+            self.assertFalse(dsim(w, [d]).critical, d)
+        self.assertIn(frozenset({"D1", "D5", "D8"}), ground_truth(w).minimal_sets)
+
+    def test_formula_transfer_regression_is_indirect_storage(self):
+        from confuzz.domain import simulate as dsim
+        from confuzz.inventory import demo_inventory_world
+        w = demo_inventory_world()
+        p = apply_action(w, Action("TRANSFER_STOCK", sku="FOR", src="N", dst="H", qty=200))
+        self.assertFalse(dsim(p, ["D1", "D5", "D8"]).critical)          # fixes the target
+        r = dsim(p, ["D2"])                                              # South DC outage alone
+        self.assertTrue(r.critical)
+        self.assertEqual({v["constraint"] for v in r.violations}, {"storage"})
+        self.assertFalse(dsim(w, ["D2"]).critical)
+
+    def test_inventory_session_gates(self):
+        s = Session.new("inventory", budget=20)
+        s.minimize(["D1", "D5", "D8"])
+        r = s.propose_repair(["F1"], [{"type": "TRANSFER_STOCK", "sku": "FOR", "src": "N", "dst": "H", "qty": 200}], "t", None)
+        self.assertEqual(s.attack(r["repair_id"], ["D2"], "t", "storage")["repair_status"], "REPAIR_REJECTED")
+        with self.assertRaises(RuleViolation):
+            s.apply(r["repair_id"], "x")
+
+
 class TestIsolation(unittest.TestCase):
-    AGENT_FACING = ["mcp_server.py", "session.py", "search.py", "repair.py", "certificate.py", "sim.py", "world.py", "llm.py", "space.py"]
+    AGENT_FACING = ["mcp_server.py", "session.py", "search.py", "repair.py", "certificate.py", "sim.py", "world.py", "llm.py", "space.py", "inventory.py", "domain.py"]
 
     def test_agent_facing_modules_never_import_ground_truth(self):
         for f in self.AGENT_FACING:

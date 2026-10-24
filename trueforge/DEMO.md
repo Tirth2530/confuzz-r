@@ -26,6 +26,11 @@ failure rate 65.5% -> 20.3% (95% bound 23.8%). Sandbox: the agent's own code rec
 Click Deny: state unchanged. Ask again, Allow: applied once. Say what is still at risk (the residual
 4-way failure; 8 modeled disruptions).
 
+**4:15 Same harness, second domain (15 s).** Switch the console to the inventory network
+(`reset_session(world_id="inventory")`, run recorded earlier from a real agent session): the 200-unit formula
+transfer fixes City Hub, and the Critic shows a South DC power outage alone now overflows City Hub storage.
+"Same agents, same gate, a different business."
+
 **4:30 How we know (30 s).** One slide: the Critic result on indirect regressions (strongest frozen
 number), with the deterministic baseline next to it. "We measured where the LLM helps and where code is enough."
 

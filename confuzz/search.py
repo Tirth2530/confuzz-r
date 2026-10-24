@@ -22,7 +22,8 @@ from itertools import combinations
 
 import numpy as np
 
-from .sim import CONSTRAINTS, SimResult, simulate
+from .domain import simulate
+from .sim import SimResult
 from .space import all_perturbations
 from .world import World
 
@@ -201,13 +202,14 @@ class AcquisitionPolicy(Policy):  # v1, kept for the record (lost to random on f
         # empirical additive surrogate
         if obs:
             Xo = np.array([[1.0 if d in o.perturbation else 0.0 for d in ids] for o in obs])
-            Y = np.array([[o.margins[c] for c in CONSTRAINTS] for o in obs])
+            cons = sorted(obs[0].margins)
+            Y = np.array([[o.margins[c] for c in cons] for o in obs])
             Xo1 = np.hstack([np.ones((len(obs), 1)), Xo])
             lam = np.eye(Xo1.shape[1]); lam[0, 0] = 0.0
             # intercept anchored at the known undisrupted schedule margins via a pseudo-observation
             base = simulate(oracle.world, frozenset()).margins
             Xo1 = np.vstack([Xo1, np.r_[1.0, np.zeros(len(ids))]])
-            Y = np.vstack([Y, [base[c] for c in CONSTRAINTS]])
+            Y = np.vstack([Y, [base[c] for c in cons]])
             W = np.linalg.solve(Xo1.T @ Xo1 + lam, Xo1.T @ Y)
             pred = np.hstack([np.ones((len(cands), 1)), X]) @ W
             r_emp = np.clip(1.0 - pred.min(axis=1), 0, 2) / 2
