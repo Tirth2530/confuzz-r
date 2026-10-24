@@ -1,0 +1,192 @@
+{
+ "repair": "swap rooms of S10 and S12",
+ "changed": [
+  {
+   "session": "S10",
+   "from": "E (North)",
+   "to": "D (South)"
+  },
+  {
+   "session": "S12",
+   "from": "D (South)",
+   "to": "E (North)"
+  }
+ ],
+ "minimal_regressions": [
+  {
+   "perturbation": [
+    "D3"
+   ],
+   "disruptions": [
+    "South-wing step-free route closed (lift outage)"
+   ],
+   "original": {
+    "critical": false,
+    "margins": {
+     "accessibility": 1.0
+    }
+   },
+   "patched_violations": [
+    {
+     "constraint": "accessibility",
+     "session": "S10",
+     "room": "D",
+     "detail": "zone South step-free route closed",
+     "normalized_margin": -1.0
+    }
+   ],
+   "assignment_diff": {
+    "S10": {
+     "original": "E",
+     "patched": "D"
+    },
+    "S12": {
+     "original": "D",
+     "patched": "E"
+    }
+   },
+   "verdicts": [
+    {
+     "constraint": "accessibility",
+     "entity": "S10",
+     "patched_margin": -1.0,
+     "original_margin_same_r": 1.0,
+     "verdict": "INTRODUCED by the repair"
+    }
+   ]
+  },
+  {
+   "perturbation": [
+    "D4"
+   ],
+   "disruptions": [
+    "Keynote speaker runs 5 min late"
+   ],
+   "original": {
+    "critical": false,
+    "margins": {
+     "transition": 0.4667
+    }
+   },
+   "patched_violations": [
+    {
+     "constraint": "transition",
+     "speaker": "Patel",
+     "sessions": [
+      "S07",
+      "S10"
+     ],
+     "raw": -2,
+     "unit": "minutes",
+     "detail": "gap 15 - delay 5 - travel North->South 12",
+     "normalized_margin": -0.1333
+    }
+   ],
+   "assignment_diff": {
+    "S10": {
+     "original": "E",
+     "patched": "D"
+    },
+    "S12": {
+     "original": "D",
+     "patched": "E"
+    }
+   },
+   "verdicts": [
+    {
+     "constraint": "transition",
+     "entity": "Patel",
+     "patched_margin": -0.1333,
+     "original_margin_same_r": 0.4667,
+     "verdict": "INTRODUCED by the repair"
+    }
+   ]
+  },
+  {
+   "perturbation": [
+    "D5"
+   ],
+   "disruptions": [
+    "Room E projector failure"
+   ],
+   "original": {
+    "critical": false,
+    "margins": {
+     "av": 1.0
+    }
+   },
+   "patched_violations": [
+    {
+     "constraint": "av",
+     "session": "S12",
+     "room": "E",
+     "detail": "room E has no working AV",
+     "normalized_margin": -1.0
+    }
+   ],
+   "assignment_diff": {
+    "S10": {
+     "original": "E",
+     "patched": "D"
+    },
+    "S12": {
+     "original": "D",
+     "patched": "E"
+    }
+   },
+   "verdicts": [
+    {
+     "constraint": "av",
+     "entity": "S12",
+     "patched_margin": -1.0,
+     "original_margin_same_r": 1.0,
+     "verdict": "INTRODUCED by the repair"
+    }
+   ]
+  },
+  {
+   "perturbation": [
+    "D8"
+   ],
+   "disruptions": [
+    "Data Contracts demand surge (+20%)"
+   ],
+   "original": {
+    "critical": false,
+    "margins": {
+     "capacity": 0.0833
+    }
+   },
+   "patched_violations": [
+    {
+     "constraint": "capacity",
+     "session": "S12",
+     "room": "E",
+     "raw": -20,
+     "unit": "seats",
+     "detail": "capacity 160, demand 180",
+     "normalized_margin": -0.125
+    }
+   ],
+   "assignment_diff": {
+    "S10": {
+     "original": "E",
+     "patched": "D"
+    },
+    "S12": {
+     "original": "D",
+     "patched": "E"
+    }
+   },
+   "verdicts": [
+    {
+     "constraint": "capacity",
+     "entity": "S12",
+     "patched_margin": -0.125,
+     "original_margin_same_r": 0.1818,
+     "verdict": "INTRODUCED by the repair"
+    }
+   ]
+  }
+ ]
+}

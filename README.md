@@ -141,6 +141,15 @@ Development results, no-LLM conditions (`experiments/results/critic_dev_noLLM.js
   deterministic per scenario, so its unit is the scenario: n = 21 indirect). With n = 21, H-C1 is
   powered only for large effects; a null result will be reported as such.
 
+**Secondary architectural hypothesis (added 12:40 Oct 24, after the dev split above and before any
+frozen Critic run; H-C1 and H-C2 above are unchanged):**
+- H-C3 (specialization): deterministic structural reasoning is strong on direct, local regressions,
+  and OpenAI semantic reasoning adds value mainly on indirect, second-order ones. If so, the best
+  Critic is a hybrid rather than OpenAI-only. Evidence for H-C3 = H-C1 holds while OpenAI does not
+  exceed diff-guided on DIRECT scenarios. The frozen run evaluates only the pre-registered conditions;
+  any hybrid is designed afterwards on dev data only and must be evaluated on a fresh scenario set,
+  never on these frozen outcomes.
+
 ## Blue experiment
 
 Scenario: (world, target minimal failure); 20 dev / 20 frozen worlds (63 dev scenarios).
@@ -167,6 +176,27 @@ head-to-head counts (dominates / dominated / equal / incomparable on (C, E)) and
 `scripts/export_hypergraph.py` exports minimal failing sets per stage (hidden truth, discovered,
 after each repair) from engine computation; `scripts/build_hypergraph_page.py` renders
 `viz/failure_hypergraph.html`. With `--state runs/state.json` it draws a real TrueForge session.
+
+## Live incident story: why R1 is rejected (`scripts/explain_regressions.py`)
+
+R1 = swap rooms of S10 (Agents Q&A Panel, speaker Patel) and S12 (Data Contracts): S10 moves
+E (North) -> D (South), S12 moves D (South) -> E (North). It fixes its target {D1, D2, D4}.
+Each disruption below passed alone before R1 and fails alone after it. For every one, the failing
+entity's own margin under the same disruption was positive on the original schedule, so all four
+are **introduced** by R1, not exposed:
+
+| Disruption alone | Before R1 (same entity) | After R1 | Mechanism |
+|---|---|---|---|
+| D3 South step-free route closed | S10 accessibility +1 (in North room E) | **-1** | S10 has step-free attendees and now sits in the South wing |
+| D4 Patel 5 min late | Patel transition +7 min (A->E, both North) | **-2 min** | Patel's keynote (A, North) is now followed by S10 in D (South): 15 - 5 - 12 |
+| D5 Room E projector failure | S12 AV ok (in room D) | **-1** | S12 needs AV and now sits in room E; S10 (no slides) was the one that tolerated it |
+| D8 Data Contracts surge +20% | S12 capacity +40 seats (D, 220) | **-20 seats** | S12 (180 after surge) now sits in room E (160) |
+
+Demo-world data assumption behind D3: S12 has no registered step-free attendees, S10 does (disclosed).
+R2 (standby Ballroom F + move the keynote there, cost 6) fixes all five original minimal failures with
+0 regressions. One pre-existing 4-way failure {D2, D3, D5, D6} remains: it failed before R1 as well and
+becomes minimal only because R2 fixed its subset {D3, D5, D6}. It is a known residual limitation, shown
+on the approval card and in the hypergraph.
 
 ## Demo world (hand-designed, every number below is computed)
 

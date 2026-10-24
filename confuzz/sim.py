@@ -38,6 +38,7 @@ class SimResult:
     severity: float
     assignment: dict[str, str | None]         # session -> room after playbook
     moved: dict[str, tuple[str, str | None]]  # session -> (from, to)
+    items: list = field(default_factory=list) # every checked (constraint, normalized margin, info)
 
     def to_dict(self) -> dict:
         return {
@@ -177,4 +178,11 @@ def simulate(world: World, perturbation, demand_noise: dict[str, float] | None =
             raw[c] = {}
 
     severity = sum(SEVERITY_WEIGHTS[v["constraint"]] * min(1.0, -v["normalized_margin"]) for v in violations)
-    return SimResult(pert, margins, raw, violations, bool(violations), severity, assignment, moved)
+    items = [(c, m, info) for c in CONSTRAINTS for m, info in per[c]]
+    return SimResult(pert, margins, raw, violations, bool(violations), severity, assignment, moved, items)
+
+    
+def entity_margin(r: SimResult, constraint: str, key: str, value) -> float | None:
+    """Normalized margin of one specific entity (session, speaker or room) on one invariant."""
+    ms = [m for c, m, info in r.items if c == constraint and info.get(key) == value]
+    return min(ms) if ms else None
