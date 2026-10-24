@@ -7,6 +7,7 @@ never picks the winner and never marks a repair safe.
 
 Repair cost (operator-chosen weights, documented):
   MOVE_SESSION 1, SWAP_ROOMS 2, SHIFT_SESSION 3, ACTIVATE_STANDBY room.standby_cost (rental),
+  CANCEL_SESSION 10 (last resort: attendees lose the session),
   DO_NOTHING 0.
 
 Verification (bounded world, exact): over all 2^d perturbations compare the
@@ -25,8 +26,8 @@ from .space import all_perturbations
 from .domain import simulate
 from .world import Session, World
 
-ACTION_TYPES = ("MOVE_SESSION", "SWAP_ROOMS", "SHIFT_SESSION", "ACTIVATE_STANDBY", "DO_NOTHING")
-BASE_COST = {"MOVE_SESSION": 1.0, "SWAP_ROOMS": 2.0, "SHIFT_SESSION": 3.0, "DO_NOTHING": 0.0}
+ACTION_TYPES = ("MOVE_SESSION", "SWAP_ROOMS", "SHIFT_SESSION", "ACTIVATE_STANDBY", "CANCEL_SESSION", "DO_NOTHING")
+BASE_COST = {"MOVE_SESSION": 1.0, "SWAP_ROOMS": 2.0, "SHIFT_SESSION": 3.0, "CANCEL_SESSION": 10.0, "DO_NOTHING": 0.0}
 
 
 @dataclass(frozen=True)
@@ -57,6 +58,8 @@ class Action:
             return f"shift {self.session} to slot {self.slot}, room {self.room}"
         if self.type == "ACTIVATE_STANDBY":
             return f"activate standby room {self.room}"
+        if self.type == "CANCEL_SESSION":
+            return f"cancel {self.session}"
         return "do nothing"
 
 
@@ -91,6 +94,8 @@ def apply_action(world: World, a: Action) -> World:
             raise ValueError(f"{a.room} is not an inactive standby room")
         return replace(world, active_standby=world.active_standby | {r.id})
     s = world.session(a.session)
+    if a.type == "CANCEL_SESSION":
+        return world.with_sessions(x for x in world.sessions if x.id != s.id)
     if a.type == "MOVE_SESSION":
         if a.room not in usable:
             raise ValueError(f"room {a.room} not usable")
@@ -137,6 +142,8 @@ def concrete_actions(world: World, strategy: dict) -> list[Action]:
         out = [Action("DO_NOTHING")]
     elif t == "ACTIVATE_STANDBY":
         out = [Action(t, room=r) for r in pick("room", [r.id for r in world.rooms if r.standby])]
+    elif t == "CANCEL_SESSION":
+        out = [Action(t, session=s) for s in pick("session", sessions)]
     elif t == "MOVE_SESSION":
         out = [Action(t, session=s, room=r) for s in pick("session", sessions) for r in pick("room", rooms)]
     elif t == "SWAP_ROOMS":
@@ -191,13 +198,28 @@ def instantiate(world: World, targets: list[frozenset[str]], strategy: dict,
                          f"{len(fixing)} of {len(cands)} candidates fix the target; cheapest chosen")
 
 
-def verify_exact(original: World, patched: World, targets: list[frozenset[str]]) -> dict:
+def attributable_failure(result, ignore_rooms: set[str]) -> bool:
+    """A failure counts against a repair unless every violation sits in an incident room
+    (a room with a still-active reported incident: that is the incident's residual effect)."""
+    if not result.critical:
+        return False
+    if not ignore_rooms:
+        return True
+    return any(v.get("room") not in ignore_rooms for v in result.violations)
+
+
+def verify_exact(original: World, patched: World, targets: list[frozenset[str]],
+                 ignore_rooms: set[str] | None = None) -> dict:
     ids = original.disruption_ids
-    before, after = {}, {}
+    ignore_rooms = ignore_rooms or set()
+    before, after, attr = {}, {}, {}
     for p in all_perturbations(ids):
         before[p] = simulate(original, p).critical
-        after[p] = simulate(patched, p).critical
-    regressions = sorted((sorted(p) for p in before if after[p] and not before[p]), key=lambda x: (len(x), x))
+        ra = simulate(patched, p)
+        after[p] = ra.critical
+        attr[p] = attributable_failure(ra, ignore_rooms)
+    regressions = sorted((sorted(p) for p in before if attr[p] and not before[p]), key=lambda x: (len(x), x))
+    incident_residual = sum(1 for p in before if after[p] and not attr[p] and not before[p])
     fixed = [sorted(t) for t in targets if not after[t]]
     still = [sorted(t) for t in targets if after[t]]
     baseline_ok = not after[frozenset()]
@@ -212,6 +234,8 @@ def verify_exact(original: World, patched: World, targets: list[frozenset[str]])
         "regression_count": len(regressions),
         "failing_perturbations_before": sum(before.values()),
         "failing_perturbations_after": sum(after.values()),
+        **({"incident_residual_only": incident_residual,
+            "incident_rooms_excluded_from_regressions": sorted(ignore_rooms)} if ignore_rooms else {}),
         "scope": "exhaustive over the modeled perturbation space only",
     }
 

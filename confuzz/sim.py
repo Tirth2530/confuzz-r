@@ -60,9 +60,9 @@ def _room_access_ok(r: Room, closed_zones: set[str]) -> bool:
 def simulate(world: World, perturbation, demand_noise: dict[str, float] | None = None) -> SimResult:
     pert = tuple(sorted(set(perturbation)))
     dis = [world.disruption(d) for d in pert]
-    lost = {d.target for d in dis if d.kind == "ROOM_LOSS"}
+    lost = {d.target for d in dis if d.kind == "ROOM_LOSS"} | world.incident_rooms("ROOM_CLOSED")
     closed = {d.target for d in dis if d.kind == "ROUTE_CLOSED"}
-    av_failed = {d.target for d in dis if d.kind == "AV_FAIL"}
+    av_failed = {d.target for d in dis if d.kind == "AV_FAIL"} | world.incident_rooms("PROJECTOR_BROKEN")
     delay: dict[str, float] = {}
     surge: dict[str, float] = {}
     for d in dis:
@@ -78,7 +78,8 @@ def simulate(world: World, perturbation, demand_noise: dict[str, float] | None =
 
     usable = {r.id: r for r in world.usable_rooms() if r.id not in lost}
     room_av = {rid: r.av and rid not in av_failed for rid, r in usable.items()}
-    room_acc = {rid: _room_access_ok(r, closed) for rid, r in usable.items()}
+    no_access = world.incident_rooms("ACCESS_LOST")
+    room_acc = {rid: _room_access_ok(r, closed) and rid not in no_access for rid, r in usable.items()}
 
     # ---- operations playbook: re-host displaced sessions -----------------
     assignment: dict[str, str | None] = {}
@@ -144,7 +145,7 @@ def simulate(world: World, perturbation, demand_noise: dict[str, float] | None =
                                                "detail": "AV ok" if ok else f"room {rid} has no working AV"})
         if s.needs_access:
             ok = room_acc[rid]
-            why = "step-free ok" if ok else (f"zone {r.zone} step-free route closed" if r.zone in closed else f"room {rid} not step-free")
+            why = "step-free ok" if ok else (f"zone {r.zone} step-free route closed" if r.zone in closed else f"room {rid} lost step-free access (reported incident)" if rid in no_access else f"room {rid} not step-free")
             record("accessibility", 1.0 if ok else -1.0, {"session": s.id, "room": rid, "detail": why})
 
     for (rid, t), ss in room_slot.items():

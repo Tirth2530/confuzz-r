@@ -12,6 +12,7 @@ This module never imports confuzz.groundtruth (hidden answers).
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 import os
 import tempfile
 import time
@@ -62,6 +63,7 @@ class Session:
             "attack_budget": attack_budget, "attack_used": 0, "solver_checks": 0,
             "phase": "DISCOVER", "queries": [], "failures": [], "prior": None,
             "repairs": [], "applied": [], "events": [], "created": time.time(),
+            "incidents": [], "notifications": [],
         })
 
     @classmethod
@@ -88,12 +90,86 @@ class Session:
             self.s["phase"] = phase
 
     # ---- worlds -------------------------------------------------------------
-    def base_world(self) -> World:
-        """Original world plus approved (applied) repairs."""
+    def base_world(self, include_open_incidents: bool = True) -> World:
+        """Original world plus approved (applied) repairs plus reported incidents.
+        With include_open_incidents=False: the schedule as it was before the still-open incidents
+        (the reference a fix for an incident is checked against for regressions)."""
         w = load_world(self.s["world_id"])
         for rid in self.s["applied"]:
             w = apply_actions(w, [Action(**a) for a in self.repair(rid)["actions"]])
+        inc = [i for i in self.s.get("incidents", []) if include_open_incidents or i["status"] != "open"]
+        if inc and hasattr(w, "incidents"):
+            w = replace(w, incidents=tuple((i["kind"], i["room"], i["label"]) for i in inc))
         return w
+
+    def _targets_incident(self, r: dict) -> bool:
+        return any(self.failure(fid).get("incident_id") for fid in r["failure_ids"])
+
+    def incident_rooms_for(self, r: dict) -> set[str]:
+        rooms = set()
+        for fid in r["failure_ids"]:
+            iid = self.failure(fid).get("incident_id")
+            rooms |= {i["room"] for i in self.s.get("incidents", []) if i["id"] == iid}
+        return rooms
+
+    def reference_world(self, r: dict) -> World:
+        """What 'before' means for a repair: for an incident fix, the schedule before the incident
+        (so a regression = something that used to survive and no longer does); otherwise the current state."""
+        return self.base_world(include_open_incidents=False) if self._targets_incident(r) else self.base_world()
+
+    def report_incident(self, kind: str, room: str, note: str = "") -> dict:
+        from .world import INCIDENT_KINDS
+        w = self.base_world()
+        if not hasattr(w, "incidents"):
+            raise RuleViolation("incident reporting is implemented for the conference domain")
+        if kind not in INCIDENT_KINDS:
+            raise RuleViolation(f"issue must be one of {INCIDENT_KINDS}")
+        try:
+            rr = w.room(room)
+        except KeyError:
+            raise RuleViolation(f"unknown room {room}; rooms: {[r.id for r in w.rooms]}")
+        label = {"ROOM_CLOSED": f"{rr.name} closed", "PROJECTOR_BROKEN": f"{rr.name} projector broken",
+                 "ACCESS_LOST": f"{rr.name} lost step-free access"}[kind] + (f" ({note})" if note else "")
+        iid = f"I{len(self.s['incidents']) + 1}"
+        inc = {"id": iid, "kind": kind, "room": room, "label": label, "status": "open", "failure_id": None,
+               "reported_at": round(time.time(), 1)}
+        self.s["incidents"].append(inc)
+        r = simulate(self.base_world(), frozenset())
+        moves = r.to_dict()["playbook_moves"]
+        if not r.critical:
+            inc["status"] = "absorbed"
+            self.event("SUPERVISOR", "incident_reported", incident_id=iid, status="absorbed")
+            return {"incident_id": iid, "label": label, "status": "ABSORBED",
+                    "message": "the operations playbook handles this incident with every constraint satisfied",
+                    "playbook_moves": moves,
+                    "next": "optionally check what-if robustness with run_experiment; tell affected people about the moves"}
+        fid = f"F{len(self.s['failures']) + 1}"
+        self.s["failures"].append({"id": fid, "minimal_set": [], "order": 0, "incident_id": iid, "label": label,
+                                   "found_at_query": self.s["used"], "minimization_trace": [],
+                                   "violations": r.violations, "margins": r.to_dict()["robustness_margins"],
+                                   "playbook_moves": moves, "seed": self.s["seed"]})
+        inc["failure_id"] = fid
+        self.event("SUPERVISOR", "incident_reported", incident_id=iid, failure_id=fid, status="breaks schedule")
+        self.set_phase("REPAIR")
+        return {"incident_id": iid, "label": label, "status": "BREAKS_SCHEDULE", "failure_id": fid,
+                "violations": r.violations, "playbook_moves": moves,
+                "next": f"BLUE proposes a repair for {fid}; CRITIC attacks it with what-if disruptions; "
+                        "a counterexample is a what-if the schedule survived before the incident but not after the fix. "
+                        "If nothing holds, consider CANCEL_SESSION."}
+
+    def notifications(self, before: World, after: World) -> list[dict]:
+        """Who must be told: sessions whose room changed (by repair or playbook) or that were canceled."""
+        a0 = simulate(before, frozenset()).assignment
+        a1 = simulate(after, frozenset()).assignment
+        out = []
+        for s in before.sessions:
+            if s.id not in a1:
+                out.append({"session": s.id, "title": s.title, "speaker": s.speaker, "change": "CANCELED",
+                            "from": a0.get(s.id), "to": None, "slot": s.slot})
+            elif a0.get(s.id) != a1[s.id] or (s.slot != after.session(s.id).slot):
+                out.append({"session": s.id, "title": s.title, "speaker": s.speaker, "change": "MOVED",
+                            "from": a0.get(s.id), "to": a1[s.id], "slot": after.session(s.id).slot})
+        return out
 
     def repair(self, rid: str) -> dict:
         for r in self.s["repairs"]:
@@ -280,9 +356,10 @@ class Session:
         if self.s["attack_used"] >= self.s["attack_budget"]:
             raise RuleViolation(f"critic attack budget exhausted ({self.s['attack_used']}/{self.s['attack_budget']})")
         self.s["attack_used"] += 1
-        before = simulate(self.base_world(), p)
+        before = simulate(self.reference_world(r), p)
         after = simulate(self.patched_world(rid), p)
-        is_ce = after.critical and not before.critical
+        from .repair import attributable_failure
+        is_ce = attributable_failure(after, self.incident_rooms_for(r)) and not before.critical
         res = {"attack": len(r["attacks"]) + 1, "perturbation": sorted(p), "hypothesis": hypothesis,
                "vulnerable_constraint": vulnerable_constraint,
                "original_critical": before.critical, "patched_critical": after.critical,
@@ -307,7 +384,10 @@ class Session:
         if not r["attacks"]:
             raise RuleViolation("the critic must attack the repair at least once before verification")
         targets = [_fs(self.failure(fid)["minimal_set"]) for fid in r["failure_ids"]]
-        cert = risk_certificate(self.base_world(), self.patched_world(rid), targets, seed=self.s["seed"] + 7)
+        cert = risk_certificate(self.reference_world(r), self.patched_world(rid), targets, seed=self.s["seed"] + 7,
+                                ignore_rooms=self.incident_rooms_for(r))
+        if self._targets_incident(r):
+            cert["reference"] = "regressions are measured against the schedule before the incident"
         r["certificate"] = cert
         r["status"] = cert["status"]
         self.event("RISK", "certificate", repair_id=rid, status=cert["status"],
@@ -330,13 +410,22 @@ class Session:
             raise RuleViolation(f"refused: repair {rid} is {r['status']}, not VERIFIED_ON_TEST_SET")
         if rid in self.s["applied"]:
             raise RuleViolation(f"{rid} already applied")
+        before = load_world(self.s["world_id"])
         self.s["applied"].append(rid)
         r["status"] = "APPLIED"
+        for fid in r["failure_ids"]:
+            iid = self.failure(fid).get("incident_id")
+            for inc in self.s.get("incidents", []):
+                if inc["id"] == iid:
+                    inc["status"] = "resolved"
+        notes = self.notifications(before, self.base_world()) if hasattr(before, "sessions") else []
+        self.s["notifications"] = notes
         r["evidence_summary_shown_to_human"] = evidence_summary
         self.event("HUMAN", "approved_and_applied", repair_id=rid, actions=r["described"])
         self.set_phase("APPLIED")
         return {"applied": rid, "actions": r["described"],
                 "active_schedule_changed": True,
+                "notify": notes,
                 "note": "executed only because the human approved this tool call in TrueForge"}
 
     def evidence(self, rid: str) -> dict:
@@ -344,7 +433,7 @@ class Session:
         r = self.repair(rid)
         if not r.get("certificate"):
             raise RuleViolation(f"repair {rid} has no certificate yet; call verify_repair first")
-        ev = raw_evidence(self.base_world() if r["status"] != "APPLIED" else self._pre_apply_world(rid),
+        ev = raw_evidence(self.reference_world(r) if r["status"] != "APPLIED" else self._pre_apply_world(rid),
                           self.patched_world(rid) if r["status"] != "APPLIED" else self.base_world(),
                           seed=self.s["seed"] + 7)
         self.event("ENGINE", "evidence_exported", repair_id=rid, rows=len(ev["exact_rows"]), draws=len(ev["sampled_draws"]))

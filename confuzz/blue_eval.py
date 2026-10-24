@@ -80,7 +80,7 @@ def evaluate_plan(world: World, plan: list[Action], target: frozenset[str]) -> d
 def fixing_singles(world: World, target: frozenset[str]) -> list[Action]:
     out = []
     for t in ACTION_TYPES:
-        if t == "DO_NOTHING":
+        if t in ("DO_NOTHING", "CANCEL_SESSION"):  # cancel added after pre-registration; excluded to keep scenario sets fixed
             continue
         for a in concrete_actions(world, {"type": t}):
             w2 = apply_action(world, a)

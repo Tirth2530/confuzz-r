@@ -35,7 +35,7 @@ class Scenario:
 def fixing_repairs(world: World, target: frozenset[str], k: int = 3) -> list[Action]:
     fixing = []
     for t in ACTION_TYPES:
-        if t == "DO_NOTHING":
+        if t in ("DO_NOTHING", "CANCEL_SESSION"):  # cancel added after pre-registration; excluded to keep scenario sets fixed
             continue
         for a in concrete_actions(world, {"type": t}):
             w2 = apply_action(world, a)

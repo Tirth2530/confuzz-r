@@ -53,6 +53,17 @@ svg text{font-family:var(--mono)}
 .ev b{color:var(--ink)}
 .ev.HUMAN{border-color:var(--ok);color:var(--ok)} .ev.CRITIC{border-color:var(--critical)} .ev.RED{border-color:var(--accent)}
 .empty{color:var(--muted);font-size:13px}
+.sup{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:1100px){.sup{grid-template-columns:1fr}}
+form.rep{display:flex;flex-wrap:wrap;gap:8px;align-items:end}
+form.rep label{display:grid;gap:3px;font-size:12px;color:var(--ink-2)}
+form.rep select,form.rep input{font:13px var(--sans);padding:6px 8px;border:1px solid var(--rule);border-radius:5px;background:var(--panel);color:var(--ink)}
+form.rep button{font:600 13px var(--sans);padding:7px 14px;border-radius:5px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+form.rep button:focus-visible,form.rep select:focus-visible,form.rep input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.inc{font-size:13px;display:grid;gap:4px}
+.chip{font:600 11px var(--mono);padding:1px 7px;border-radius:4px;border:1px solid currentColor;margin-left:6px}
+.chip.open{color:var(--critical)} .chip.absorbed{color:var(--warn)} .chip.resolved{color:var(--ok)}
+.msg{font-size:12.5px;color:var(--ink-2)}
 .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--ink-2)}
 .legend span{display:inline-flex;gap:6px;align-items:center}.sw{width:16px;border-top:2px solid}
 </style>
@@ -67,6 +78,22 @@ svg text{font-family:var(--mono)}
   </header>
   <div class="rail" id="rail"></div>
   <div class="meters" id="meters"></div>
+  <section class="sup">
+    <div class="pane"><h2>Report an incident</h2>
+      <form class="rep" id="rep">
+        <label for="room">Room<select id="room"></select></label>
+        <label for="issue">Issue<select id="issue">
+          <option value="ROOM_CLOSED">Room closed (water leak, HVAC, power)</option>
+          <option value="PROJECTOR_BROKEN">Projector broken</option>
+          <option value="ACCESS_LOST">Step-free access lost (lift)</option></select></label>
+        <label for="note">Note<input id="note" placeholder="optional, e.g. water leak" maxlength="120"></label>
+        <button type="submit">Report</button>
+      </form>
+      <div class="msg" id="repmsg">Reporting records the incident. Then ask the agent in TrueForge: "Handle the reported incident."</div>
+    </div>
+    <div class="pane"><h2>Incidents</h2><div class="inc" id="incidents"></div></div>
+    <div class="pane"><h2>Who to notify after approval</h2><div class="inc" id="notify"></div></div>
+  </section>
   <div class="grid">
     <section class="pane"><h2>Experiments the agents paid for</h2><div class="list" id="queries"></div></section>
     <section class="pane"><h2>Discovered failure hypergraph</h2>
@@ -84,6 +111,10 @@ const $=id=>document.getElementById(id), css=n=>getComputedStyle(document.docume
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 let last="";
 function render(S){
+  const sel=$("room"); if(!sel.options.length&&S.rooms){S.rooms.forEach(r=>{const o=document.createElement("option");o.value=r.id;o.textContent=r.name;sel.appendChild(o)})}
+  $("rep").hidden=S.domain!=="conference";
+  $("incidents").innerHTML=(S.incidents||[]).length?S.incidents.map(i=>`<div>${esc(i.id)} · ${esc(i.label)}<span class="chip ${i.status}">${i.status}</span>${i.failure_id?` · breaks the schedule (${esc(i.failure_id)})`:i.status==="absorbed"?" · handled by the playbook; check what-ifs":""}</div>`).join(""):`<div class="empty">No incidents reported.</div>`;
+  $("notify").innerHTML=(S.notifications||[]).length?S.notifications.map(n=>`<div><b>${esc(n.speaker)}</b> · ${esc(n.title)}: ${n.change==="CANCELED"?"canceled":`room ${esc(n.from)} → <b>${esc(n.to)}</b>`} (slot ${n.slot})</div>`).join(""):`<div class="empty">Appears when a fix is approved and applied.</div>`;
   $("world").textContent=S.world.name;
   $("scripted").hidden=!S.scripted;
   const k=PHASES.indexOf(S.phase);
@@ -133,6 +164,10 @@ function draw(S){
     const l=el("text",{x:lx,y:ly+3,"text-anchor":Math.abs(Math.cos(a))<.2?"middle":(Math.cos(a)>0?"start":"end"),"font-size":9.5,fill:css("--ink-2")});
     l.textContent=d.kind.replace("_"," ").toLowerCase();});
 }
+$("rep").addEventListener("submit",async ev=>{ev.preventDefault();
+  try{const r=await fetch("/api/incident",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({room:$("room").value,issue:$("issue").value,note:$("note").value})});
+    const d=await r.json(); $("repmsg").textContent=d.error?("Not recorded: "+d.error):(d.status==="BREAKS_SCHEDULE"?`${d.label}: this breaks the schedule. Ask the agent to handle ${d.incident_id}.`:`${d.label}: the playbook copes for now. Ask the agent to check what could still go wrong.`);
+  }catch(e){$("repmsg").textContent="Could not reach the server.";}});
 async function poll(){
   try{const r=await fetch("/api/state",{cache:"no-store"}); const txt=await r.text();
     $("conn").textContent="live"; $("conn").className="badge live";

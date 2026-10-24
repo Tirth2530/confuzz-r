@@ -59,7 +59,10 @@ def _run(fn, *a, **k) -> str:
 def _spec(s: Session) -> dict:
     from .domain import domain_name
     w = s.base_world()
-    return {"domain": domain_name(w), "phase": s.s["phase"], "discovery_budget": f"{s.s['used']}/{s.s['budget']}",
+    return {"domain": domain_name(w), "incidents": s.s.get("incidents", []),
+            "open_failures": [{"id": f["id"], "minimal_set": f["minimal_set"], "incident_id": f.get("incident_id")}
+                              for f in s.s["failures"]],
+            "phase": s.s["phase"], "discovery_budget": f"{s.s['used']}/{s.s['budget']}",
             "critic_budget": f"{s.s['attack_used']}/{s.s['attack_budget']}",
             "applied_repairs": s.s["applied"], "spec": w.public_spec()}
 
@@ -76,6 +79,15 @@ def get_system() -> str:
 def get_conference() -> str:
     """Alias of get_system (kept for compatibility)."""
     return _run(_spec)
+
+
+@mcp.tool(annotations=SIM)
+def report_incident(room: str, issue: str, note: str = "") -> str:
+    """Record an incident happening NOW (conference domain), as a supervisor would report it.
+    issue: ROOM_CLOSED (water leak, HVAC, power: room unusable), PROJECTOR_BROKEN, ACCESS_LOST (lift broken).
+    The incident becomes part of the current reality. Returns BREAKS_SCHEDULE (with a failure id to repair)
+    or ABSORBED (the playbook copes; check what-if robustness next, since safety margins may have shrunk)."""
+    return _run(lambda s: s.report_incident(issue, room, note))
 
 
 @mcp.tool(annotations=SIM)
@@ -232,6 +244,9 @@ def _public_state() -> dict:
                       "violations": [{"constraint": v["constraint"], "detail": v.get("detail", "")} for v in f["violations"]]}
                      for f in st["failures"]],
         "repairs": repairs, "applied": st["applied"],
+        "incidents": st.get("incidents", []), "notifications": st.get("notifications", []),
+        "rooms": [{"id": r.id, "name": r.name} for r in getattr(w, "rooms", []) if not getattr(r, "standby", False)],
+        "domain": getattr(w, "domain", "conference"),
         "events": [{k: v for k, v in e.items() if k in ("t", "actor", "kind", "repair_id", "failure_id", "perturbation",
                                                          "minimal_set", "status", "counterexample", "to", "critical", "covers", "top")}
                    for e in st["events"][-120:]],
@@ -246,6 +261,18 @@ try:
     @mcp.custom_route("/console", methods=["GET"], include_in_schema=False)
     async def _console(request: Request):
         return HTMLResponse((_P(__file__).parent / "static" / "console.html").read_text())
+
+    @mcp.custom_route("/api/incident", methods=["POST"], include_in_schema=False)
+    async def _incident(request: Request):
+        body = await request.json()
+        s = Session.load()
+        try:
+            out = s.report_incident(str(body.get("issue", "")), str(body.get("room", "")), str(body.get("note", ""))[:120])
+            s.save()
+            _log(f"{'console report_incident':24s} ok    {out.get('incident_id')} {out.get('status')}")
+            return JSONResponse(out)
+        except RuleViolation as e:
+            return JSONResponse({"error": str(e)}, status_code=400)
 
     @mcp.custom_route("/api/state", methods=["GET"], include_in_schema=False)
     async def _state(request: Request):

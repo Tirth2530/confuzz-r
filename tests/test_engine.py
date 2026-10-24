@@ -211,6 +211,43 @@ class TestInventoryDomain(unittest.TestCase):
             s.apply(r["repair_id"], "x")
 
 
+class TestSupervisorIncidents(unittest.TestCase):
+    def test_hall_a_leak_absorbed_but_safety_shrinks(self):
+        s = Session.new("demo", budget=20)
+        r = s.report_incident("ROOM_CLOSED", "A", "water leak")
+        self.assertEqual(r["status"], "ABSORBED")
+        w = s.base_world()
+        self.assertFalse(simulate(w, []).critical)
+        self.assertTrue(simulate(w, ["D1", "D4"]).critical)        # surge + late speaker now fatal
+        self.assertFalse(simulate(demo_world(), ["D1", "D4"]).critical)
+
+    def test_incident_flow_rejects_swap_verifies_standby_and_notifies(self):
+        s = Session.new("demo", budget=20)
+        s.report_incident("ROOM_CLOSED", "A", "water leak")
+        s.minimize(["D1", "D4"])
+        s.propose_repair(["F1"], [{"type": "SWAP_ROOMS", "session": "S10", "session2": "S12"}], "t", None)
+        self.assertEqual(s.attack("R1", ["D4"], "t", "transition")["repair_status"], "REPAIR_REJECTED")
+        s.propose_repair(["F1"], [{"type": "ACTIVATE_STANDBY", "room": "F"}, {"type": "MOVE_SESSION", "session": "S07", "room": "F"}], "t",
+                         {"previous_repair_id": "R1", "counterexample": ["D4"], "diagnosis": "d", "what_changed_in_my_reasoning": "w"})
+        s.attack("R2", ["D5"], "t", "av")
+        self.assertEqual(s.verify("R2")["status"], "VERIFIED_ON_TEST_SET")
+        notes = s.apply("R2", "t")["notify"]
+        self.assertIn(("S07", "F"), {(n["session"], n["to"]) for n in notes})
+
+    def test_breaking_incident_and_incident_room_attribution(self):
+        s = Session.new("demo", budget=20)
+        r = s.report_incident("ROOM_CLOSED", "D", "water leak")
+        self.assertEqual(r["status"], "BREAKS_SCHEDULE")
+        p = s.propose_repair([r["failure_id"]], [{"type": "ACTIVATE_STANDBY", "room": "F"}], "t", None)
+        s.attack(p["repair_id"], ["D6"], "t", "capacity")
+        self.assertEqual(s.verify(p["repair_id"])["status"], "VERIFIED_ON_TEST_SET")
+
+    def test_cancel_excluded_from_preregistered_scenarios(self):
+        from confuzz.scenarios import fixing_repairs
+        w = demo_world()
+        self.assertTrue(all(a.type != "CANCEL_SESSION" for a in fixing_repairs(w, frozenset({"D1", "D2", "D4"}), k=50)))
+
+
 class TestIsolation(unittest.TestCase):
     AGENT_FACING = ["mcp_server.py", "session.py", "search.py", "repair.py", "certificate.py", "sim.py", "world.py", "llm.py", "space.py", "inventory.py", "domain.py"]
 

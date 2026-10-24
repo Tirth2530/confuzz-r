@@ -5,6 +5,10 @@ makes it reproduce the incident, propose a fix, survive an attack by its own Cri
 verification, and only then reach a human approval gate in TrueForge. Working today in two domains on
 one engine: conference operations and a regional inventory network. Vision and roadmap: `VISION.md`.
 
+**Who uses it:** an event supervisor reports an incident on the console (room, issue: closed / projector
+broken / lift broken). The agent tells them whether the schedule copes, what could still break it, the fix
+that survives attack, the cheaper fixes it rejected and why, and after approval, who to notify.
+
 
 An adversarial verification engine for conference operations. OpenAI agents running on TrueForge
 search for **interaction failures** (disruptions that are harmless alone but break the schedule

@@ -3,6 +3,7 @@
   python scripts/checkpoint.py status              # phase, budgets, repairs, applied, state fingerprint
   python scripts/checkpoint.py prepare-verified    # SCRIPTED state with R1 rejected and R2 verified (approval test)
   python scripts/checkpoint.py prepare-inventory   # SCRIPTED inventory state (R1 rejected, R2 verified)
+  python scripts/checkpoint.py prepare-incident    # SCRIPTED Hall A water-leak story (R1 rejected, R2 verified)
   python scripts/checkpoint.py reset [inventory]   # fresh demo (conference) or inventory session
 
 The fingerprint hashes everything except the event log, so `status` before and after a Deny must
@@ -78,6 +79,28 @@ def prepare_inventory():
     status()
 
 
+def prepare_incident():
+    """SCRIPTED: supervisor reports Hall A water leak (absorbed), what-if check finds {D1, D4} now fails,
+    swap rejected by a single speaker-delay attack, standby F + keynote to F verified."""
+    s = Session.new("demo", budget=20, attack_budget=10)
+    s.s["prepared_by_script"] = True
+    s.event("SCRIPTED_PREP", "notice", text="events until 'prep_done' were produced by scripts/checkpoint.py, not by an agent")
+    s.report_incident("ROOM_CLOSED", "A", "water leak")
+    s.query(["D1", "D4"], "test", "SCRIPTED_PREP", "prep")
+    s.minimize(["D1", "D4"], actor="SCRIPTED_PREP")
+    fid = s.s["failures"][-1]["id"]
+    s.propose_repair([fid], [{"type": "SWAP_ROOMS", "session": "S10", "session2": "S12"}], "prep", None)
+    s.attack("R1", ["D4"], "prep", "transition")
+    s.propose_repair([fid], [{"type": "ACTIVATE_STANDBY", "room": "F"}, {"type": "MOVE_SESSION", "session": "S07", "room": "F"}], "prep",
+                     {"previous_repair_id": "R1", "counterexample": ["D4"], "diagnosis": "prep", "what_changed_in_my_reasoning": "prep"})
+    s.attack("R2", ["D5"], "prep", "av")
+    v = s.verify("R2")
+    s.event("SCRIPTED_PREP", "prep_done")
+    s.save()
+    print("prepared:", v["status"], "for R2; R1 is", s.repair("R1")["status"])
+    status()
+
+
 def reset(world: str = "demo"):
     s = Session.new(world, budget=20, attack_budget=10); s.save(); status()
 
@@ -87,4 +110,5 @@ if __name__ == "__main__":
     if cmd == "reset":
         reset(sys.argv[2] if len(sys.argv) > 2 else "demo")
     else:
-        {"status": status, "prepare-verified": prepare_verified, "prepare-inventory": prepare_inventory}[cmd]()
+        {"status": status, "prepare-verified": prepare_verified, "prepare-inventory": prepare_inventory,
+         "prepare-incident": prepare_incident}[cmd]()

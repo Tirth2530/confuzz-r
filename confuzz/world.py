@@ -48,6 +48,11 @@ class Disruption:
 
 
 KINDS = ("SURGE", "ROOM_LOSS", "ROUTE_CLOSED", "AV_FAIL", "SPEAKER_DELAY")
+# Supervisor-reported incidents (current reality):
+#   ROOM_CLOSED      room unusable (water leak, HVAC, power): its sessions are re-hosted by the playbook
+#   PROJECTOR_BROKEN room has no working AV
+#   ACCESS_LOST      room is not step-free reachable (lift broken)
+INCIDENT_KINDS = ("ROOM_CLOSED", "PROJECTOR_BROKEN", "ACCESS_LOST")
 
 
 @dataclass(frozen=True)
@@ -61,6 +66,9 @@ class World:
     travel: tuple[tuple[str, str, int], ...]  # (zone_a, zone_b, minutes), symmetric
     disruptions: tuple[Disruption, ...]
     active_standby: frozenset[str] = frozenset()
+    # Incidents happening NOW (reported by a supervisor): (kind, room, label), kind in INCIDENT_KINDS.
+    # They are part of the current reality, unlike the 8 disruptions, which are what-if checks.
+    incidents: tuple[tuple[str, str, str], ...] = ()
 
     # ---- lookups -------------------------------------------------------
     def room(self, rid: str) -> Room:
@@ -92,7 +100,11 @@ class World:
         raise KeyError((za, zb))
 
     def usable_rooms(self) -> list[Room]:
-        return [r for r in self.rooms if (not r.standby) or r.id in self.active_standby]
+        closed = {room for kind, room, _ in self.incidents if kind == "ROOM_CLOSED"}
+        return [r for r in self.rooms if ((not r.standby) or r.id in self.active_standby) and r.id not in closed]
+
+    def incident_rooms(self, kind: str) -> set[str]:
+        return {room for k, room, _ in self.incidents if k == kind}
 
     def with_sessions(self, sessions: Iterable[Session]) -> "World":
         return replace(self, sessions=tuple(sessions))
@@ -107,6 +119,7 @@ class World:
             "slot_gap_min": self.slot_gap_min,
             "travel_minutes": [{"zones": [a, b], "minutes": m} for a, b, m in self.travel],
             "rooms": [asdict(r) | {"active": (not r.standby) or r.id in self.active_standby} for r in self.rooms],
+            "active_incidents": [{"kind": k, "room": r, "label": l} for k, r, l in self.incidents],
             "sessions": [asdict(s) for s in self.sessions],
             "disruptions": [asdict(d) for d in self.disruptions],
             "operations_playbook": PLAYBOOK_TEXT,

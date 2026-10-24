@@ -50,8 +50,9 @@ def sampled_draws(world: World, n: int, seed: int, noise: float):
 
 
 def risk_certificate(original: World, patched: World, targets: list[frozenset[str]],
-                     n: int = 400, seed: int = 7, noise: float = 0.10, conf: float = 0.95) -> dict:
-    exact = verify_exact(original, patched, targets)
+                     n: int = 400, seed: int = 7, noise: float = 0.10, conf: float = 0.95,
+                     ignore_rooms: set[str] | None = None) -> dict:
+    exact = verify_exact(original, patched, targets, ignore_rooms)
     before_f, after_f, before_l, after_l, acc_after = 0, 0, [], [], 0
     for p, dn in sampled_draws(original, n, seed, noise):
         rb, ra = simulate(original, p, dn), simulate(patched, p, dn)

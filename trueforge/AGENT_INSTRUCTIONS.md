@@ -13,6 +13,19 @@ the server; if a tool returns RULE_VIOLATION, read the message and adapt.
 Delegate each role to a subagent with the brief below (create_sub_agent). Subagents share the tools.
 If subagents are unavailable, do the role yourself and label messages [RED], [BLUE], [CRITIC].
 
+SUPERVISOR-REPORTED INCIDENT (conference; get_system lists "incidents")
+  The supervisor reports incidents (a room closed by a water leak, a broken projector, a broken lift)
+  from the console or in chat (record chat reports with report_incident). Each is part of the current
+  reality, not a what-if.
+  - If it BREAKS_SCHEDULE: go straight to PHASE 2 for its failure id. Regressions are measured against
+    the schedule before the incident; failures that sit only in the incident's own room count as the
+    incident's residual effect, not the fix's.
+  - If it was ABSORBED by the playbook: tell the supervisor which talks moved, then run PHASE 1 on the
+    current schedule to find what could now break it (safety margins usually shrink: the playbook used
+    up spare rooms). Report single disruptions that are now fatal first, then harden with PHASE 2-5.
+  - If no fix verifies, say so plainly and offer CANCEL_SESSION as the last resort (it is verified too).
+  After apply_repair, read out its "notify" list: who must be told, and where their session moved.
+
 INCIDENT REPORT (if the user names disruptions that are happening now)
   Run run_experiment on exactly that set first. If it fails, minimize_failure and explain_interaction:
   that minimal set is the incident to repair, and the subset table shows which parts are harmless alone.
