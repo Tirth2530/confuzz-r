@@ -81,3 +81,11 @@ is configured and the platform probe passes. It isolates commands with `@anthrop
 With the server in HTTP mode, open **http://127.0.0.1:8800/console**. It polls the same state file the
 tools write and shows only what agents have paid for: experiments, discovered minimal failures, repairs,
 critic counterexamples, certificates, approval status, trace. Put it next to the TrueForge chat on stage.
+
+### Trust boundary
+
+For this local demo, TrueForge is the trusted execution gateway for destructive MCP tools.
+The CONFUZZ-R server enforces repair eligibility, phase ordering, and apply/announcement state;
+TrueForge enforces human authorization of `apply_repair`, `send_announcements`, and
+`reset_session`. A production deployment should additionally authenticate the MCP endpoint and
+bind authorization to the exact approved request payload.

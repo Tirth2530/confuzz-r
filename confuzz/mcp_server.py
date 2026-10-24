@@ -24,7 +24,7 @@ except ImportError:  # mcp 1.x
 from mcp.types import ToolAnnotations
 
 from .domain import simulate
-from .session import RuleViolation, Session
+from .session import RuleViolation, Session, load_world
 
 mcp = _Server("confuzz-r")
 
@@ -287,31 +287,57 @@ try:
 
     def _board() -> dict:
         s = Session.load()
+
+        # Approved/applied operational state.
         w = s.base_world(include_open_incidents=False)
+
+        # Current incident reality. Used only to surface immediate closures;
+        # unapproved schedule changes are never shown as approved moves.
+        live = s.base_world()
+
         out = {"name": w.name, "domain": getattr(w, "domain", "conference"),
                "announcements": list(reversed(s.s.get("announcements", []))), "rows": []}
+
         if out["domain"] == "conference":
-            from .world import demo_world as _dw
-            orig = load_world_for(s)
+            orig = load_world(s.s["world_id"])
             a0 = simulate(orig, frozenset()).assignment
             a1 = simulate(w, frozenset()).assignment
+
             names = {r.id: r.name for r in w.rooms}
-            for x in sorted(orig.sessions, key=lambda x: (x.slot, x.id)):
-                now = a1.get(x.id) if any(y.id == x.id for y in w.sessions) else None
-                out["rows"].append({"slot": x.slot, "title": x.title, "speaker": x.speaker,
-                                    "room": names.get(now) if now else None, "was": names.get(a0.get(x.id)),
-                                    "status": "CANCELED" if now is None else ("MOVED" if now != a0.get(x.id) else "")})
-            out["closed_rooms"] = [names[r] for r in w.incident_rooms("ROOM_CLOSED")] if hasattr(w, "incident_rooms") else []
+            cur = {y.id: y for y in w.sessions}
+
+            for x in sorted(orig.sessions, key=lambda x: (cur.get(x.id, x).slot, x.id)):
+                current = cur.get(x.id)
+                now = a1.get(x.id) if current else None
+                slot = current.slot if current else x.slot
+                moved = now is not None and (now != a0.get(x.id) or slot != x.slot)
+
+                out["rows"].append({
+                    "slot": slot,
+                    "title": x.title,
+                    "speaker": x.speaker,
+                    "room": names.get(now) if now else None,
+                    "was": names.get(a0.get(x.id)),
+                    "was_slot": x.slot,
+                    "status": "CANCELED" if now is None else ("MOVED" if moved else ""),
+                })
+
+            live_names = {r.id: r.name for r in live.rooms}
+            out["closed_rooms"] = (
+                [live_names[r] for r in live.incident_rooms("ROOM_CLOSED")]
+                if hasattr(live, "incident_rooms") else []
+            )
         else:
             for l in w.lines:
                 if w.sku(l.sku).critical:
-                    out["rows"].append({"site": w.site(l.site).name, "sku": w.sku(l.sku).name,
-                                        "available": l.stock + l.inbound + sum(u for st, k, u in w.expedited if st == l.site and k == l.sku)})
-        return out
+                    out["rows"].append({
+                        "site": w.site(l.site).name,
+                        "sku": w.sku(l.sku).name,
+                        "available": l.stock + l.inbound
+                        + sum(u for st, k, u in w.expedited if st == l.site and k == l.sku)
+                    })
 
-    def load_world_for(s):
-        from .session import load_world as _lw
-        return _lw(s.s["world_id"])
+        return out
 
     @mcp.custom_route("/board", methods=["GET"], include_in_schema=False)
     async def _board_page(request: Request):

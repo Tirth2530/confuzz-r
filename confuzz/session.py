@@ -420,7 +420,7 @@ class Session:
             raise RuleViolation(f"refused: repair {rid} is {r['status']}, not VERIFIED_ON_TEST_SET")
         if rid in self.s["applied"]:
             raise RuleViolation(f"{rid} already applied")
-        before = load_world(self.s["world_id"])
+        before = self.base_world()
         self.s["applied"].append(rid)
         r["status"] = "APPLIED"
         for fid in r["failure_ids"]:
@@ -477,6 +477,15 @@ class Session:
             if not aud or not txt or len(txt) > 400:
                 raise RuleViolation("each message needs an audience and a text of at most 400 characters")
             clean.append({"audience": aud, "text": txt})
+        for prior in self.s.get("announcements", []):
+            if prior.get("repair_id") == rid and prior.get("messages") == clean:
+                return {
+                    "published": len(clean),
+                    "channel": "attendee board (http://127.0.0.1:8800/board)",
+                    "duplicate": True,
+                    "note": "identical announcement batch was already published; no duplicate created",
+                }
+
         batch = {"repair_id": rid, "t": round(time.time(), 1), "messages": clean}
         self.s.setdefault("announcements", []).append(batch)
         self.event("HUMAN", "announcements_published", repair_id=rid, n=len(clean))

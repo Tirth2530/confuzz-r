@@ -259,7 +259,12 @@ class TestAnnouncements(unittest.TestCase):
         s.attack(rid, ["D6"], "t", "capacity"); s.verify(rid)
         notes = s.apply(rid, "t")["notify"]
         self.assertTrue(notes and all(n.get("audience") and n.get("message") for n in notes))
-        self.assertEqual(s.send_announcements(rid, [{"audience": "Attendees", "text": "Moved to Ballroom F"}])["published"], 1)
+        msg = [{"audience": "Attendees", "text": "Moved to Ballroom F"}]
+        self.assertEqual(s.send_announcements(rid, msg)["published"], 1)
+        self.assertEqual(len(s.s.get("announcements", [])), 1)
+        retry = s.send_announcements(rid, msg)
+        self.assertTrue(retry.get("duplicate"))
+        self.assertEqual(len(s.s.get("announcements", [])), 1)
 
     def test_inventory_notifications_name_sites_and_suppliers(self):
         s = Session.new("inventory", budget=20)

@@ -50,10 +50,10 @@ function render(B){
   $("name").textContent=B.domain==="conference"?"DevConf live updates":"Network supply updates";
   const msgs=[];B.announcements.forEach(b=>b.messages.forEach(m=>msgs.push({...m,t:b.t})));
   $("ann").innerHTML=msgs.length?msgs.map(m=>`<div class="msg"><div class="aud">${esc(m.audience)}</div><div class="txt">${esc(m.text)}</div><div class="t">${new Date(m.t*1000).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})}</div></div>`).join(""):`<div class="empty">No changes announced.</div>`;
-  $("closed").innerHTML=(B.closed_rooms||[]).length?`<div class="closed">Closed: ${B.closed_rooms.map(esc).join(", ")}. Sessions there have moved; see below.</div>`:"";
+  $("closed").innerHTML=(B.closed_rooms||[]).length?`<div class="closed">Closed: ${B.closed_rooms.map(esc).join(", ")}. Check approved announcements below for replacement rooms.</div>`:"";
   if(B.domain==="conference"){
     $("tabletitle").textContent="Schedule";
-    $("tbl").innerHTML=`<thead><tr><th>Slot</th><th>Session</th><th>Room</th></tr></thead><tbody>`+B.rows.map(r=>`<tr><td>${r.slot}</td><td>${esc(r.title)}<span class="was">${esc(r.speaker)}</span></td><td class="room">${r.room?esc(r.room):"—"}${r.status?`<span class="badge ${r.status}">${r.status}</span>`:""}${r.status==="MOVED"?`<span class="was">was ${esc(r.was)}</span>`:""}</td></tr>`).join("")+`</tbody>`;
+    $("tbl").innerHTML=`<thead><tr><th>Slot</th><th>Session</th><th>Room</th></tr></thead><tbody>`+B.rows.map(r=>`<tr><td>${r.slot}</td><td>${esc(r.title)}<span class="was">${esc(r.speaker)}</span></td><td class="room">${r.room?esc(r.room):"—"}${r.status?`<span class="badge ${r.status}">${r.status}</span>`:""}${r.status==="MOVED"?`<span class="was">was ${esc(r.was)}${r.was_slot!==r.slot?` · slot ${esc(r.was_slot)}`:""}</span>`:""}</td></tr>`).join("")+`</tbody>`;
   }else{
     $("tabletitle").textContent="Critical supply over the next 7 days";
     $("tbl").innerHTML=`<thead><tr><th>Site</th><th>Item</th><th>Units available</th></tr></thead><tbody>`+B.rows.map(r=>`<tr><td>${esc(r.site)}</td><td>${esc(r.sku)}</td><td class="room">${r.available}</td></tr>`).join("")+`</tbody>`;
