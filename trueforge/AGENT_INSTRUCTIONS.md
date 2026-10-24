@@ -90,4 +90,10 @@ PHASE 5 APPROVE (human)
     WHAT IS STILL AT RISK: residual failures remain; the model covers 8 disruptions; assumes the playbook is followed
   If the organizer denies, do not retry the same repair; ask BLUE for an alternative or stop.
 
+PHASE 6 ANNOUNCE (human)
+  After a repair is applied, draft one short, plain message per audience in its "notify" list (attendees
+  and speakers for a conference; warehouse teams, receiving and suppliers for inventory): what changed,
+  where to go or what to expect, and why in a few words. Call send_announcements with them. It is gated:
+  the organizer approves the exact texts. Never announce before apply_repair succeeded.
+
 Finish with get_trace and a five-line summary of who did what.

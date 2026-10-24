@@ -16,8 +16,8 @@ Terminal A prints `[confuzz] state file: ...` at startup and one line per tool c
 | # | Do | Pass when | Evidence |
 |---|---|---|---|
 | 1 | `OUTBOUND_URL_ALLOWED_HOSTS='["127.0.0.1"]' npx @truefoundry/trueforge@latest` | UI loads at http://localhost:8790 | log |
-| 2 | Settings → Connectors → Add MCP Server `http://127.0.0.1:8800/mcp` | 13 tools listed; terminal A shows `POST /mcp 200` | screenshot of tool list |
-| 3 | New agent, OpenAI model, `AGENT_INSTRUCTIONS.md`, shields: on only `apply_repair`, `reset_session`. Chat: *"Call get_conference, then run_experiment with disruptions [D1] and report the robustness margins."* | runs with **no approval prompt** | screenshot |
+| 2 | Settings → Connectors → Add MCP Server `http://127.0.0.1:8800/mcp` | 16 tools listed; terminal A shows `POST /mcp 200` | screenshot of tool list |
+| 3 | New agent, OpenAI model, `AGENT_INSTRUCTIONS.md`, shields: on only `apply_repair`, `send_announcements`, `reset_session`. Chat: *"Call get_conference, then run_experiment with disruptions [D1] and report the robustness margins."* | runs with **no approval prompt** | screenshot |
 | 4 | (same turn) | agent reports capacity **0.045**, transition **0.8**; `status` shows discovery 1/20 | screenshot + status |
 | 5 | Chat: *"Spawn a CRITIC subagent: it must call run_experiment with [D1, D2, D4] and return the violations it got."* | Sessions shows a subagent run; it returns a **transition** violation for Patel (gap 15 - delay 5 - travel 12) | screenshot of subagent in Sessions |
 | 6 | Chat: *"Call apply_repair with repair_id R1 and evidence_summary 'test'."* | TrueForge pauses (Allow/Deny). Click **Allow**: server answers `RULE_VIOLATION ... unknown repair R1` (nothing verified). `status` fingerprint unchanged | screenshot of the refusal + status |
@@ -28,7 +28,7 @@ Terminal A prints `[confuzz] state file: ...` at startup and one line per tool c
 | 10 | Sandbox: `curl -s http://localhost:8790/api/v1/capabilities` shows sandbox enabled; turn Sandbox on for the agent. With the prepared state, chat: *"Call export_evidence for R2, then write and run Python in the sandbox that recomputes the regression count, failing before/after, failure rate and 95% Clopper-Pearson upper bound, and compare them to the certificate."* | the agent's script prints 0 regressions, 124 -> 16, 0.2025, 0.2384, all matching | screenshot of the sandbox code + output |
 | 11 | Open http://127.0.0.1:8800/console during steps 3-10 | panes update within ~1 s of each tool call | screenshot |
 
-Note: the server now has 13 tools (export_evidence was added).
+Note: the server now has 16 tools (export_evidence, get_system, report_incident, send_announcements were added). Attendee board: http://127.0.0.1:8800/board
 
 After 11 passes: `python scripts/checkpoint.py reset`, run one full live episode (prompt: *"Run the CONFUZZ-R
 investigation on the demo conference."*), then

@@ -22,8 +22,10 @@ fragile, tests "speaker 5 minutes late" alone: transition -2 minutes. Rejected, 
 there (cost 6). CRITIC fails to break it. verify_repair: 0 regressions over all 256 combinations, failing combinations
 216 -> 32. The agent's own sandbox code double-checks the numbers and names what is still at risk.
 
-**3:40 Where it stops (45 s).** apply_repair: TrueForge pauses with the evidence. Deny: nothing changes. Allow: applied
-once. The console's "who to notify" panel lists the 4 speakers and their new rooms.
+**3:40 Where it stops, and who finds out (45 s).** apply_repair: TrueForge pauses with the evidence. Deny: nothing
+changes. Allow: applied once. The agent drafts one message per affected talk; send_announcements pauses for approval
+too (messages can't be unsent). Allow, and the attendee board (http://127.0.0.1:8800/board, on a phone if possible)
+shows "Keynote moved to Ballroom F, North wing, step-free access. Reason: water leak." No more missed shouted announcements.
 
 **4:25 Bigger than conferences (35 s).** "Same engine, same agents, same gate, a different business": switch to the
 inventory network (recorded real run). RED found a genuine three-way formula stockout. BLUE proposed a 100-unit

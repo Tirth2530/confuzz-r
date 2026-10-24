@@ -158,17 +158,27 @@ class Session:
                         "If nothing holds, consider CANCEL_SESSION."}
 
     def notifications(self, before: World, after: World) -> list[dict]:
-        """Who must be told: sessions whose room changed (by repair or playbook) or that were canceled."""
+        """Who must be told: sessions whose room changed (by repair or playbook) or that were canceled.
+        Inventory: sites, suppliers and teams affected by the approved change."""
+        if getattr(before, "domain", "") == "inventory":
+            from .inventory import notifications as inv_notes
+            return inv_notes(before, after)
         a0 = simulate(before, frozenset()).assignment
         a1 = simulate(after, frozenset()).assignment
         out = []
         for s in before.sessions:
             if s.id not in a1:
                 out.append({"session": s.id, "title": s.title, "speaker": s.speaker, "change": "CANCELED",
-                            "from": a0.get(s.id), "to": None, "slot": s.slot})
+                            "from": a0.get(s.id), "to": None, "slot": s.slot,
+                            "audience": f"Attendees of '{s.title}' and {s.speaker}",
+                            "message": f"'{s.title}' (slot {s.slot}) is canceled."})
             elif a0.get(s.id) != a1[s.id] or (s.slot != after.session(s.id).slot):
+                to = after.room(a1[s.id])
                 out.append({"session": s.id, "title": s.title, "speaker": s.speaker, "change": "MOVED",
-                            "from": a0.get(s.id), "to": a1[s.id], "slot": after.session(s.id).slot})
+                            "from": a0.get(s.id), "to": a1[s.id], "slot": after.session(s.id).slot,
+                            "audience": f"Attendees of '{s.title}' and {s.speaker}",
+                            "message": f"'{s.title}' (slot {after.session(s.id).slot}) moved from {before.room(a0[s.id]).name if a0.get(s.id) else 'its room'} to "
+                                       f"{to.name}, {to.zone} wing{', step-free access' if to.step_free else ''}."})
         return out
 
     def repair(self, rid: str) -> dict:
@@ -410,7 +420,12 @@ class Session:
             raise RuleViolation(f"refused: repair {rid} is {r['status']}, not VERIFIED_ON_TEST_SET")
         if rid in self.s["applied"]:
             raise RuleViolation(f"{rid} already applied")
-        before = load_world(self.s["world_id"])
+        current = self.base_world()
+        before = (
+            current
+            if getattr(current, "domain", "") == "inventory"
+            else self.base_world(include_open_incidents=False)
+        )
         self.s["applied"].append(rid)
         r["status"] = "APPLIED"
         for fid in r["failure_ids"]:
@@ -418,7 +433,7 @@ class Session:
             for inc in self.s.get("incidents", []):
                 if inc["id"] == iid:
                     inc["status"] = "resolved"
-        notes = self.notifications(before, self.base_world()) if hasattr(before, "sessions") else []
+        notes = self.notifications(before, self.base_world())
         self.s["notifications"] = notes
         r["evidence_summary_shown_to_human"] = evidence_summary
         self.event("HUMAN", "approved_and_applied", repair_id=rid, actions=r["described"])
@@ -453,6 +468,34 @@ class Session:
                 break
             w = apply_actions(w, [Action(**a) for a in self.repair(x)["actions"]])
         return w
+
+    def send_announcements(self, rid: str, messages: list[dict]) -> dict:
+        """Publish announcements for an APPLIED repair (attendee board / outbox). Gated by TrueForge approval."""
+        r = self.repair(rid)
+        if r["status"] != "APPLIED":
+            raise RuleViolation(f"refused: announcements only follow an approved, applied repair ({rid} is {r['status']})")
+        if not messages or len(messages) > 20:
+            raise RuleViolation("give 1-20 messages, each {audience, text}")
+        clean = []
+        for m in messages:
+            aud, txt = str(m.get("audience", "")).strip(), str(m.get("text", "")).strip()
+            if not aud or not txt or len(txt) > 400:
+                raise RuleViolation("each message needs an audience and a text of at most 400 characters")
+            clean.append({"audience": aud, "text": txt})
+        for prior in self.s.get("announcements", []):
+            if prior.get("repair_id") == rid and prior.get("messages") == clean:
+                return {
+                    "published": len(clean),
+                    "channel": "attendee board (http://127.0.0.1:8800/board)",
+                    "duplicate": True,
+                    "note": "identical announcement batch was already published; no duplicate created",
+                }
+
+        batch = {"repair_id": rid, "t": round(time.time(), 1), "messages": clean}
+        self.s.setdefault("announcements", []).append(batch)
+        self.event("HUMAN", "announcements_published", repair_id=rid, n=len(clean))
+        return {"published": len(clean), "channel": "attendee board (http://127.0.0.1:8800/board)",
+                "note": "published only because the human approved this tool call in TrueForge"}
 
     def trace(self) -> list[dict]:
         return self.s["events"]

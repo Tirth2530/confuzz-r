@@ -363,3 +363,35 @@ def demo_inventory_world() -> InvWorld:
         D("D8", "SUPPLIER_DELAY", "NutriCo", 4, "NutriCo formula shipments delayed 4 days"),
     )
     return InvWorld("inventory", "Regional distributor demo network (hand-designed)", sites, skus, lines, 7, disruptions)
+
+
+def notifications(before: InvWorld, after: InvWorld) -> list[dict]:
+    """Who must be told after an approved inventory change, derived from what actually changed."""
+    out = []
+    site = lambda s: before.site(s).name
+    sku = lambda k: before.sku(k).name
+    for b in before.lines:
+        a = after.line(b.site, b.sku)
+        if a.stock != b.stock:
+            d = a.stock - b.stock
+            out.append({"audience": f"{site(b.site)} warehouse team", "change": "STOCK_TRANSFER",
+                        "message": f"{'Receive' if d > 0 else 'Ship out'} {abs(d)} units of {sku(b.sku)} "
+                                   f"({'incoming transfer' if d > 0 else 'outgoing transfer'}).",
+                        "site": b.site, "sku": b.sku, "delta": d})
+        if a.inbound != b.inbound:
+            out.append({"audience": f"{site(b.site)} receiving and {b.supplier}", "change": "EXTRA_ORDER",
+                        "message": f"Extra order of {a.inbound - b.inbound} units of {sku(b.sku)} for {site(b.site)}.",
+                        "site": b.site, "sku": b.sku, "delta": a.inbound - b.inbound})
+    for s, k, u in after.expedited:
+        if (s, k, u) not in before.expedited:
+            out.append({"audience": f"{site(s)} receiving team", "change": "EXPEDITED",
+                        "message": f"Air shipment of {u} units of {sku(k)} arrives at {site(s)} on day 1.", "site": s, "sku": k})
+    for s, u in after.rented_cold:
+        if (s, u) not in before.rented_cold:
+            out.append({"audience": f"{site(s)} facilities", "change": "COLD_STORAGE",
+                        "message": f"A self-powered refrigerated unit (+{u} units) is being installed at {site(s)}.", "site": s})
+    for k in sorted(after.dual_sourced - before.dual_sourced):
+        sup = next(l.supplier for l in before.lines if l.sku == k)
+        out.append({"audience": f"Procurement, {sup} and the second supplier", "change": "DUAL_SOURCE",
+                    "message": f"{sku(k)} is now dual-sourced; part of the volume moves to a second supplier.", "sku": k})
+    return out
