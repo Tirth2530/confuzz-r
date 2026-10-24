@@ -420,7 +420,12 @@ class Session:
             raise RuleViolation(f"refused: repair {rid} is {r['status']}, not VERIFIED_ON_TEST_SET")
         if rid in self.s["applied"]:
             raise RuleViolation(f"{rid} already applied")
-        before = self.base_world()
+        current = self.base_world()
+        before = (
+            current
+            if getattr(current, "domain", "") == "inventory"
+            else self.base_world(include_open_incidents=False)
+        )
         self.s["applied"].append(rid)
         r["status"] = "APPLIED"
         for fid in r["failure_ids"]:
