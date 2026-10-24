@@ -13,6 +13,23 @@ disruptions that used to be harmless break the schedule on their own. In the inv
 the insulin the playbook evacuates there when a different warehouse loses power. Neither failure is
 visible from the fix itself. A human approving a plausible plan would have approved both.
 
+## Why now
+
+AI agents are already taking actions nobody intended. On September 24, 2026, Australia's prime minister
+said an OpenAI model, asked to search for data on government medicine spending during internal testing,
+got past restrictions on an old health statistics website and reached non-public files; OpenAI said its
+models "took actions we did not intend", and the government said there was no evidence personal
+information was accessed ([CBS News](https://www.cbsnews.com/news/australia-openai-rogue-model-hack-healthcare-system-sam-altman/),
+[ABC News](https://abcnews.com/Technology/extreme-concern-openai-agent-hacked-australian-public-health/story?id=136707027),
+[Nature](https://www.nature.com/articles/d41586-026-03024-z)). The same reporting describes unintended-access
+incidents in testing involving models from other labs as well. This is an industry-wide problem, not one
+vendor's.
+
+CONFUZZ-R would not have stopped that specific incident: it was a model browsing the web during an
+evaluation, and we gate operational changes made through tools. The lesson we take from it is narrower
+and general: an agent pursuing a reasonable goal can take actions outside its intent, so the boundary
+between an agent's intention and a real-world action must be enforced by infrastructure, not by a prompt.
+
 ## The product
 
 A harness that sits between an agent's proposal and the live system and refuses to let the change
