@@ -21,12 +21,14 @@ TrueForge agent loop (OpenAI)
 ## Run
 
 ```bash
-python -m unittest discover -s tests -v          # 24 integrity tests
+python -m unittest discover -s tests -v          # integrity tests
 python scripts/scripted_episode.py               # engine loop over real stdio MCP (scripted, no LLM)
 python experiments/bench.py --split dev --conditions random,random_pruned,agt_uniform --tag my_dev
 OPENAI_API_KEY=... python experiments/bench.py --split frozen \
     --conditions random,random_pruned,agt_uniform,agt_openai --tag v3_frozen   # run ONCE
 python experiments/figures.py experiments/results/v3_frozen.json
+OPENAI_API_KEY=... python experiments/critic_bench.py --split frozen \
+    --conditions random,size_ordered,diff_guided,openai_critic --tag critic_frozen          # run ONCE
 ```
 TrueForge wiring: `trueforge/SETUP.md`. Agent instructions: `trueforge/AGENT_INSTRUCTIONS.md`.
 
@@ -93,6 +95,40 @@ Red receives only the public spec (`World.public_spec()`): schedule, rooms, zone
 step-free needs, disruption definitions, playbook, constraint definitions. Never ground truth.
 Benchmark priors are produced by **direct OpenAI API calls** (mode recorded as `direct_openai_api`)
 with on-disk caching; live demo runs happen inside TrueForge. The two are never conflated.
+
+## Sponsor gate (hard rule from here on)
+
+Every improvement must pass two gates. Research: does it make verification more rigorous or
+measurable? Sponsor: does it make OpenAI reasoning or a native TrueForge capability more
+structurally necessary? Improvements that move intelligence or orchestration into plain Python
+are not prioritized. Each OpenAI role has a measurable ablation against a no-LLM alternative:
+
+| OpenAI role | No-LLM alternative | Metric | Status |
+|---|---|---|---|
+| Red: semantic prior over interaction hyperedges | uniform prior (same group-testing engine) | Minimal Failure Recall@B | needs key; frozen run pending |
+| Critic: targeted attack on a proposed repair | random, size-ordered, **diff-guided heuristic** | queries to first counterexample, Success@k | needs key; frozen run pending |
+| Blue: repair strategy choice | cheapest fixing action from the solver | verified-repair rate, cost | not built yet |
+
+## Critic experiment
+
+Scenario: a world, one of its minimal failures, and one of the 3 cheapest single repairs that fix
+it but introduce at least one regression (hidden answer: the regression set, from exhaustive
+enumeration). Each attack is one simulator query on the patched schedule. Scenario sets were fixed
+before any Critic condition ran on frozen data: 84 dev scenarios, 60 frozen (60 worlds per split).
+An earlier 20-world, cheapest-repair-only definition gave 5 frozen scenarios and was superseded.
+
+Development results, no-LLM conditions (`experiments/results/critic_dev_noLLM.json`, 84 scenarios x 10 seeds):
+
+| Critic | Success@1 | @2 | @3 | @5 | @10 | Median queries to counterexample |
+|---|---|---|---|---|---|---|
+| Random | 0.11 | 0.30 | 0.40 | 0.55 | 0.78 | 5 |
+| Size-ordered | 0.08 | 0.22 | 0.35 | 0.53 | 0.73 | 5 |
+| Diff-guided heuristic | 0.26 | 0.48 | 0.61 | 0.69 | 0.77 | 3 |
+
+The bar for the OpenAI Critic is the diff-guided heuristic, not random. The heuristic plateaus
+because it tests disruptions that look unrelated to the repair last; regressions caused by indirect
+effects (consumed spare capacity, playbook choices that change) are where semantic reasoning could
+add value. That is a hypothesis until `critic_frozen` runs.
 
 ## Demo world (hand-designed, every number below is computed)
 

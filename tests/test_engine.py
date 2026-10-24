@@ -174,6 +174,8 @@ class TestIsolation(unittest.TestCase):
             for node in ast.walk(tree):
                 if isinstance(node, ast.ImportFrom):
                     self.assertNotIn("groundtruth", node.module or "", f"{f} imports ground truth")
+                    self.assertNotIn("scenarios", node.module or "", f"{f} imports evaluator scenarios")
+                    self.assertNotIn("benchmark_worlds", node.module or "", f"{f} imports evaluator worlds")
                 if isinstance(node, ast.Import):
                     for n in node.names:
                         self.assertNotIn("groundtruth", n.name, f"{f} imports ground truth")
@@ -183,6 +185,15 @@ class TestIsolation(unittest.TestCase):
         spec = demo_world().public_spec()
         self.assertNotIn("minimal", str(spec).lower())
         self.assertNotIn("failing", str(spec).lower())
+
+    def test_critic_prompt_has_no_regressions(self):
+        from confuzz.llm import critic_prompt
+        from confuzz.scenarios import repair_diff, scenarios
+        s = scenarios("dev", n_worlds=3)
+        for sc in s:
+            p = critic_prompt(sc.world, repair_diff(sc), sorted(sc.target))
+            self.assertNotIn("regressions", p)
+            self.assertNotIn(sc.world.id, p)
 
     def test_red_prompt_has_no_answers(self):
         from confuzz.llm import red_prompt
