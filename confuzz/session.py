@@ -424,7 +424,7 @@ class Session:
         before = (
             current
             if getattr(current, "domain", "") == "inventory"
-            else self.base_world(include_open_incidents=False)
+            else self._pre_apply_world(rid)
         )
         self.s["applied"].append(rid)
         r["status"] = "APPLIED"
