@@ -32,15 +32,27 @@ SIM = ToolAnnotations(readOnlyHint=False, destructiveHint=False, idempotentHint=
 DESTRUCTIVE = ToolAnnotations(readOnlyHint=False, destructiveHint=True, idempotentHint=False, openWorldHint=False)
 
 
+def _log(msg: str):
+    import sys
+    print(f"[confuzz] {msg}", file=sys.stderr, flush=True)
+
+
 def _run(fn, *a, **k) -> str:
-    """Load session, run, persist. Rule violations go back to the agent as an error payload."""
+    """Load session, run, persist. Rule violations go back to the agent as an error payload.
+    Every call logs one line to stderr: tool, outcome, budgets, state file."""
+    import inspect
+    from .session import STATE_PATH
+    tool = inspect.stack()[1].function
     s = Session.load()
     try:
         out = fn(s, *a, **k)
         s.save()
+        _log(f"{tool:24s} ok    phase={s.s['phase']:9s} discovery={s.s['used']}/{s.s['budget']} "
+             f"critic={s.s['attack_used']}/{s.s['attack_budget']} applied={s.s['applied']} state={STATE_PATH}")
         return json.dumps(out, indent=1, default=str)
     except RuleViolation as e:
         s.save()
+        _log(f"{tool:24s} RULE  {e}")
         return json.dumps({"error": "RULE_VIOLATION", "message": str(e)})
 
 
@@ -166,6 +178,8 @@ def main():
     ap.add_argument("--host", default="127.0.0.1")
     ap.add_argument("--port", type=int, default=8800)
     a = ap.parse_args()
+    from .session import STATE_PATH
+    _log(f"state file: {STATE_PATH}  (scripts/checkpoint.py status must report the same path)")
     if not a.http:
         mcp.run()
         return

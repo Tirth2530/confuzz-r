@@ -11,6 +11,8 @@ python -m confuzz.mcp_server --http --port 8800
 ```
 Terminal B (state inspection): `export CONFUZZ_STATE=$PWD/runs/state.json` then `python scripts/checkpoint.py status` whenever asked.
 
+Terminal A prints `[confuzz] state file: ...` at startup and one line per tool call (tool, ok/RULE, discovery and critic budgets, applied, state file). If the agent says it ran an experiment but no `run_experiment ok` line appears, the agent did not call the tool. If the line appears but `status` disagrees, the two terminals point at different state files: compare the paths.
+
 | # | Do | Pass when | Evidence |
 |---|---|---|---|
 | 1 | `OUTBOUND_URL_ALLOWED_HOSTS='["127.0.0.1"]' npx @truefoundry/trueforge@latest` | UI loads at http://localhost:8790 | log |
