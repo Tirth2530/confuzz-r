@@ -10,6 +10,12 @@ the server; if a tool returns RULE_VIOLATION, read the message and adapt.
 Delegate each role to a subagent with the brief below (create_sub_agent). Subagents share the tools.
 If subagents are unavailable, do the role yourself and label messages [RED], [BLUE], [CRITIC].
 
+INCIDENT REPORT (if the user names disruptions that are happening now)
+  Run run_experiment on exactly that set first. If it fails, minimize_failure and explain_interaction:
+  that minimal set is the incident to repair, and the subset table shows which parts are harmless alone.
+  If it passes, say the schedule tolerates this incident as-is (with the margins), then continue with
+  PHASE 1 to look for nearby combinations that would not be tolerated.
+
 PHASE 1 DISCOVER (RED subagent)
   Brief: "You are RED. Call get_conference. The incident disruptions are listed there. Build a causal
   model: what each disruption displaces or removes (sessions, spare rooms, step-free options, AV,

@@ -62,9 +62,22 @@ Use `127.0.0.1`, not `localhost` (a dotless hostname is denied unless listed).
    Pass: Sessions shows a subagent run with its own context.
 4. Reset: delete `runs/state.json` or call `reset_session` (approval-gated).
 
-## 6. Sandbox (optional)
+## 6. Sandbox (no Daytona needed in standalone mode)
 
-Daytona is the only sandbox provider today. It needs a Daytona API key with `write:sandboxes`,
-`write:snapshots` and `manage:secrets` scopes (saving the provider fails otherwise). If the TrueFoundry
-team can provide one: enable the sandbox on the agent and have an analysis subagent load
-`experiments/results/*.json` and compute the paired statistics itself. If not available, say so; do not fake it.
+The docs say Daytona is the only provider, but the source (`packages/trueforge/src/sandbox/localRuntime.ts`)
+shows that **standalone mode (`npx`) falls back to a local sandbox automatically** when no Daytona provider
+is configured and the platform probe passes. It isolates commands with `@anthropic-ai/sandbox-runtime`
+(Seatbelt on macOS, bubblewrap + seccomp on Linux) in a per-session directory with a Python venv.
+
+- Check: `curl -s http://localhost:8790/api/v1/capabilities` should show `"sandbox":{"enabled":true}`.
+- Enable **Sandbox** on the agent (Create/Edit agent → Sandbox on).
+- In the run, the VERIFY phase calls `export_evidence` (87 KB, offloaded to a sandbox file) and the agent
+  writes and runs its own Python to recompute the certificate. That is the sandbox moment for the demo.
+- If capabilities shows sandbox disabled, the probe failed on this machine: say so in the demo, do not fake it.
+  Daytona remains the alternative (API key scopes `write:sandboxes`, `write:snapshots`, `manage:secrets`).
+
+## 7. Live console
+
+With the server in HTTP mode, open **http://127.0.0.1:8800/console**. It polls the same state file the
+tools write and shows only what agents have paid for: experiments, discovered minimal failures, repairs,
+critic counterexamples, certificates, approval status, trace. Put it next to the TrueForge chat on stage.

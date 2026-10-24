@@ -1,13 +1,14 @@
 # 5-minute demo
 
 Setup before going on stage: server running, TrueForge open, `python scripts/checkpoint.py reset`,
-hypergraph page open in a second tab, fallback recording ready.
+the live console (http://127.0.0.1:8800/console) beside the TrueForge chat, the hypergraph page in a second tab, fallback recording ready.
 
 **0:00 The job (30 s).** "It's 10am at DevConf. Hall A just lost its HVAC. The keynote is surging, a lift
 is out, the speaker is running late. Each problem alone is fine. Together they break the schedule.
 Organizers want to hand this to an agent, but the agent must never change the live schedule on its own."
 
-**0:30 Discover (60 s).** Prompt: *"Run the CONFUZZ-R investigation on the demo conference."*
+**0:30 Discover (60 s).** Ask a judge to pick the incident from the 8 disruptions (or use D1+D2+D4).
+Prompt: *"Incident report: <their picks> are happening now. Run the CONFUZZ-R investigation."*
 Show RED's interaction model, the scorer's "covers N unresolved interactions", run_experiment returning
 real margins, minimize_failure, and the subset table: every pair PASS, the triple CRITICAL.
 

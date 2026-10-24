@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CONFUZZ-R Incident Console</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: incident-room instrument. Phase rail on top, three live panes (experiments, failure hypergraph, repairs), trace below. */
+:root{
+  --bg:#f3f4f6; --panel:#ffffff; --ink:#12161d; --ink-2:#4b5361; --rule:#dadde3; --muted:#9aa1ad;
+  --accent:#2a5bd7; --critical:#c8322f; --ok:#2f8a5b; --warn:#b7791f;
+  --sans:"Instrument Sans",ui-sans-serif,system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{--bg:#0d1015;--panel:#151920;--ink:#e8ebf0;--ink-2:#a8afbb;--rule:#262c36;--muted:#5d6674;--accent:#6f97ff;--critical:#ff6b66;--ok:#4cc38a;--warn:#e3a541;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 var(--sans)}
+.wrap{max-width:1500px;margin:0 auto;padding:18px max(16px,env(safe-area-inset-left,0px));display:grid;gap:14px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 18px}
+h1{font-size:20px;margin:0;font-weight:600}
+.sub{color:var(--ink-2);font-size:13px}
+.badge{font:600 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:4px;border:1px solid currentColor}
+.live{color:var(--ok)} .down{color:var(--critical)} .scripted{color:var(--warn)}
+.rail{display:flex;flex-wrap:wrap;gap:4px}
+.step{font:500 12px var(--mono);padding:5px 10px;border:1px solid var(--rule);background:var(--panel);color:var(--muted);border-radius:4px}
+.step.done{color:var(--ink-2)} .step.now{color:var(--ink);border-color:var(--accent);box-shadow:inset 0 -2px 0 var(--accent)}
+.meters{display:flex;flex-wrap:wrap;gap:18px;font:12px var(--mono);color:var(--ink-2)}
+.meter{display:flex;align-items:center;gap:8px}
+.bar{width:140px;height:6px;background:var(--rule);border-radius:3px;overflow:hidden}.bar i{display:block;height:100%;background:var(--accent)}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:1100px){.grid{grid-template-columns:1fr}}
+.pane{background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:12px;display:grid;gap:8px;min-width:0}
+.pane h2{font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin:0}
+.list{display:grid;gap:6px;max-height:520px;overflow:auto}
+.q{display:grid;grid-template-columns:2.2em 1fr auto;gap:2px 8px;padding:6px 8px;border-left:3px solid var(--rule);background:var(--bg);border-radius:0 5px 5px 0}
+.q.fail{border-left-color:var(--critical)} .q.pass{border-left-color:var(--ok)}
+.q .n{font:600 12px var(--mono);color:var(--ink-2)} .q .p{font:600 12px var(--mono)} .q .r{font:600 11px var(--mono)}
+.q.fail .r{color:var(--critical)} .q.pass .r{color:var(--ok)}
+.q .d{grid-column:2/-1;font-size:12px;color:var(--ink-2);overflow-wrap:anywhere}
+svg{width:100%;height:auto;display:block}
+svg text{font-family:var(--mono)}
+.card{border:1px solid var(--rule);border-radius:6px;padding:10px;display:grid;gap:6px;background:var(--bg)}
+.card .top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.card .id{font:600 13px var(--mono)}
+.st{font:600 11px var(--mono);letter-spacing:.05em;text-transform:uppercase;padding:1px 7px;border-radius:4px;border:1px solid currentColor}
+.st.REPAIR_REJECTED{color:var(--critical)} .st.VERIFIED_ON_TEST_SET{color:var(--ok)} .st.APPLIED{color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,transparent)} .st.PROPOSED{color:var(--accent)}
+.kv{font:12px var(--mono);color:var(--ink-2);overflow-wrap:anywhere}
+.kv b{color:var(--ink);font-weight:600}
+.ce{font-size:12.5px;color:var(--critical)}
+.trace{display:flex;flex-wrap:wrap;gap:4px}
+.ev{font:11px var(--mono);padding:2px 6px;border-radius:3px;border:1px solid var(--rule);color:var(--ink-2);background:var(--panel)}
+.ev b{color:var(--ink)}
+.ev.HUMAN{border-color:var(--ok);color:var(--ok)} .ev.CRITIC{border-color:var(--critical)} .ev.RED{border-color:var(--accent)}
+.empty{color:var(--muted);font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--ink-2)}
+.legend span{display:inline-flex;gap:6px;align-items:center}.sw{width:16px;border-top:2px solid}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>CONFUZZ-R incident console</h1>
+    <span class="sub" id="world"></span>
+    <span class="badge down" id="conn">connecting</span>
+    <span class="badge scripted" id="scripted" hidden>scripted state</span>
+  </header>
+  <div class="rail" id="rail"></div>
+  <div class="meters" id="meters"></div>
+  <div class="grid">
+    <section class="pane"><h2>Experiments the agents paid for</h2><div class="list" id="queries"></div></section>
+    <section class="pane"><h2>Discovered failure hypergraph</h2>
+      <svg id="g" viewBox="0 0 520 470" role="img" aria-label="Discovered minimal failures"></svg>
+      <div class="legend"><span><i class="sw" style="border-color:var(--accent)"></i>minimal failure found</span><span><i class="sw" style="border-color:var(--critical)"></i>breaks a proposed repair (critic counterexample)</span></div>
+      <div class="list" id="failures"></div>
+    </section>
+    <section class="pane"><h2>Repairs</h2><div class="list" id="repairs"></div></section>
+  </div>
+  <section class="pane"><h2>Trace</h2><div class="trace" id="trace"></div></section>
+</div>
+<script>
+const PHASES=["DISCOVER","REPRODUCE","REPAIR","ATTACK","VERIFY","APPROVE","APPLIED"];
+const $=id=>document.getElementById(id), css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let last="";
+function render(S){
+  $("world").textContent=S.world.name;
+  $("scripted").hidden=!S.scripted;
+  const k=PHASES.indexOf(S.phase);
+  $("rail").innerHTML=PHASES.map((p,i)=>`<span class="step ${i<k?"done":i===k?"now":""}">${p}</span>`).join("");
+  const m=(l,[a,b])=>`<span class="meter">${l} ${a}/${b}<span class="bar"><i style="width:${100*a/b}%"></i></span></span>`;
+  $("meters").innerHTML=m("discovery queries",S.discovery)+m("critic attacks",S.critic)+`<span class="meter">Red interaction model: ${S.prior_submitted?"submitted":"not yet"}</span>`;
+  const lab=id=>(S.world.disruptions.find(d=>d.id===id)||{}).label||id;
+  $("queries").innerHTML=S.queries.length?S.queries.slice().reverse().map(q=>`<div class="q ${q.fail?"fail":"pass"}"><span class="n">#${q.i}</span><span class="p">{${q.p.join(", ")}}</span><span class="r">${q.fail?"FAIL":"PASS"}</span><div class="d">${esc(q.purpose)}${q.actor?" · "+esc(q.actor):""}${q.violations.length?" · "+q.violations.map(v=>esc(v.constraint+": "+v.detail)).join("; "):""}${q.why?"<br>"+esc(q.why):""}</div></div>`).join(""):`<div class="empty">No experiments yet. RED spends discovery queries here.</div>`;
+  $("failures").innerHTML=S.failures.map(f=>`<div class="kv"><b>${f.id}</b> {${f.set.join(", ")}} · ${f.order}-way · found at query ${f.at} · ${f.violations.map(v=>esc(v.constraint+": "+v.detail)).join("; ")}</div>`).join("");
+  $("repairs").innerHTML=S.repairs.length?S.repairs.map(r=>{
+    const ces=r.attacks.filter(a=>String(a.verdict).startsWith("COUNTEREXAMPLE"));
+    const c=r.certificate;
+    return `<div class="card"><div class="top"><span class="id">${r.id} · cost ${r.cost}</span><span class="st ${r.status}">${r.status.replaceAll("_"," ")}</span></div>
+      <div class="kv">${r.actions.map(esc).join("; ")} · fixes ${r.failure_ids.join(", ")}</div>
+      ${r.revision?`<div class="kv">revision of ${esc(r.revision.previous_repair_id)}: ${esc(r.revision.what_changed_in_my_reasoning)}</div>`:""}
+      ${r.attacks.map(a=>`<div class="${String(a.verdict).startsWith("COUNTEREXAMPLE")?"ce":"kv"}">critic {${(a.perturbation||[]).join(", ")}}: ${esc(a.verdict)}${a.violations&&a.violations.length?" · "+a.violations.map(v=>esc(v.constraint+": "+v.detail)).join("; "):""}</div>`).join("")}
+      ${c?`<div class="kv">exact: <b>${c.regressions}</b> regressions over ${c.space} combinations · failing ${c.failing_before} → <b>${c.failing_after}</b><br>sampled (n=${c.n}): failure rate ${c.rate_before} → <b>${c.rate_after}</b>, 95% upper ${c.upper95}</div>`:""}
+      ${S.applied.includes(r.id)?`<div class="kv"><b>Applied to the live schedule after human approval in TrueForge.</b></div>`:r.status==="VERIFIED_ON_TEST_SET"?`<div class="kv">Eligible for approval. Waiting for the organizer in TrueForge.</div>`:""}
+    </div>`}).join(""):`<div class="empty">No repair proposed yet.</div>`;
+  $("trace").innerHTML=S.events.slice(-60).map(e=>`<span class="ev ${e.actor}"><b>${e.actor}</b> ${esc(e.kind)}${e.repair_id?" "+e.repair_id:""}${e.perturbation?" {"+e.perturbation.join(",")+"}":""}${e.status?" "+e.status:""}${e.to?" → "+e.to:""}</span>`).join("");
+  draw(S);
+}
+function draw(S){
+  const g=$("g"); g.replaceChildren(); const NS="http://www.w3.org/2000/svg";
+  const el=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);g.appendChild(e);return e};
+  const D=S.world.disruptions, cx=260, cy=230, R=165, pos={};
+  D.forEach((d,i)=>{const a=-Math.PI/2+i*2*Math.PI/D.length;pos[d.id]=[cx+R*Math.cos(a),cy+R*Math.sin(a),a]});
+  S.failures.forEach((f,k)=>{
+    const pts=f.set.map(id=>pos[id]); let hx=pts.reduce((s,p)=>s+p[0],0)/pts.length, hy=pts.reduce((s,p)=>s+p[1],0)/pts.length;
+    hx=cx+(hx-cx)*.6+((k%3)-1)*10; hy=cy+(hy-cy)*.6;
+    if(f.set.length===1){const[x,y]=pts[0];el("circle",{cx:x,cy:y,r:22,fill:"none",stroke:css("--accent"),"stroke-width":2.5});return}
+    pts.forEach(p=>el("line",{x1:hx,y1:hy,x2:p[0],y2:p[1],stroke:css("--accent"),"stroke-width":2.2}));
+    el("circle",{cx:hx,cy:hy,r:6+f.set.length,fill:css("--accent"),stroke:css("--panel"),"stroke-width":2});
+    const t=el("text",{x:hx,y:hy-13,"text-anchor":"middle","font-size":10,fill:css("--ink-2")});t.textContent=f.id;
+  });
+  S.repairs.forEach(r=>r.attacks.filter(a=>String(a.verdict).startsWith("COUNTEREXAMPLE")).forEach(a=>{
+    const ids=a.perturbation||[];
+    if(ids.length===1){const[x,y]=pos[ids[0]];el("circle",{cx:x,cy:y,r:27,fill:"none",stroke:css("--critical"),"stroke-width":2.5});
+      const t=el("text",{x,y:y+42,"text-anchor":"middle","font-size":10,"font-weight":600,fill:css("--critical")});t.textContent=r.id+" breaks";}
+    else{const pts=ids.map(i=>pos[i]);const hx=pts.reduce((s,p)=>s+p[0],0)/pts.length,hy=pts.reduce((s,p)=>s+p[1],0)/pts.length;
+      pts.forEach(p=>el("line",{x1:hx,y1:hy,x2:p[0],y2:p[1],stroke:css("--critical"),"stroke-width":2,"stroke-dasharray":"5 3"}));}
+  }));
+  D.forEach(d=>{const[x,y,a]=pos[d.id];
+    el("circle",{cx:x,cy:y,r:14,fill:css("--panel"),stroke:css("--ink"),"stroke-width":1.5});
+    const t=el("text",{x,y:y+4,"text-anchor":"middle","font-size":11,"font-weight":600,fill:css("--ink")});t.textContent=d.id;
+    const lx=cx+(R+28)*Math.cos(a),ly=cy+(R+28)*Math.sin(a);
+    const l=el("text",{x:lx,y:ly+3,"text-anchor":Math.abs(Math.cos(a))<.2?"middle":(Math.cos(a)>0?"start":"end"),"font-size":9.5,fill:css("--ink-2")});
+    l.textContent=d.kind.replace("_"," ").toLowerCase();});
+}
+async function poll(){
+  try{const r=await fetch("/api/state",{cache:"no-store"}); const txt=await r.text();
+    $("conn").textContent="live"; $("conn").className="badge live";
+    if(txt!==last){last=txt; render(JSON.parse(txt));}
+  }catch(e){$("conn").textContent="server unreachable"; $("conn").className="badge down";}
+  setTimeout(poll,1200);
+}
+poll();
+</script>
+</body>
+</html>

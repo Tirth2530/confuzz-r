@@ -179,6 +179,68 @@ def reset_session(world_id: str = "demo", budget: int = 20, attack_budget: int =
     return _run(f)
 
 
+# ---------------------------------------------------------------------------
+# Live incident console (HTTP mode only): http://127.0.0.1:8800/console
+# Reads the persisted session state on every poll. Shows only what agents have paid for:
+# no ground truth, no exhaustive enumeration.
+# ---------------------------------------------------------------------------
+def _public_state() -> dict:
+    s = Session.load()
+    st = s.s
+    w = s.base_world()
+    repairs = []
+    for r in st["repairs"]:
+        cert = r.get("certificate") or {}
+        ex = cert.get("exact_bounded_space", {})
+        sm = cert.get("sampled_demand_uncertainty", {})
+        repairs.append({
+            "id": r["id"], "status": r["status"], "actions": r["described"], "cost": r["cost"],
+            "failure_ids": r["failure_ids"], "rationale": r.get("rationale", ""),
+            "revision": r.get("revision"),
+            "attacks": [{"perturbation": a.get("perturbation"), "verdict": a.get("verdict"),
+                         "hypothesis": a.get("hypothesis", ""), "constraint": a.get("vulnerable_constraint", ""),
+                         "violations": [{"constraint": v["constraint"], "detail": v.get("detail", "")} for v in a.get("patched_violations", [])]}
+                        for a in r["attacks"]],
+            "certificate": {"status": cert.get("status"), "regressions": ex.get("regression_count"),
+                            "failing_before": ex.get("failing_perturbations_before"), "failing_after": ex.get("failing_perturbations_after"),
+                            "space": ex.get("space_size"), "rate_before": sm.get("failure_rate_before"),
+                            "rate_after": sm.get("failure_rate_after"), "upper95": sm.get("clopper_pearson_95_upper_after"),
+                            "n": sm.get("n")} if cert else None,
+        })
+    return {
+        "world": {"name": w.name, "disruptions": [{"id": d.id, "kind": d.kind, "label": d.label} for d in w.disruptions]},
+        "phase": st["phase"], "discovery": [st["used"], st["budget"]], "critic": [st["attack_used"], st["attack_budget"]],
+        "scripted": st.get("prepared_by_script", False), "prior_submitted": st["prior"] is not None,
+        "queries": [{"i": q["index"], "p": q["perturbation"], "fail": q["critical_failure"], "purpose": q["purpose"],
+                     "actor": q.get("actor", ""), "why": q.get("rationale", ""),
+                     "violations": [{"constraint": v["constraint"], "detail": v.get("detail", "")} for v in q["violations"]]}
+                    for q in st["queries"]],
+        "failures": [{"id": f["id"], "set": f["minimal_set"], "order": f["order"], "at": f["found_at_query"],
+                      "violations": [{"constraint": v["constraint"], "detail": v.get("detail", "")} for v in f["violations"]]}
+                     for f in st["failures"]],
+        "repairs": repairs, "applied": st["applied"],
+        "events": [{k: v for k, v in e.items() if k in ("t", "actor", "kind", "repair_id", "failure_id", "perturbation",
+                                                         "minimal_set", "status", "counterexample", "to", "critical", "covers", "top")}
+                   for e in st["events"][-120:]],
+    }
+
+
+try:
+    from starlette.requests import Request
+    from starlette.responses import HTMLResponse, JSONResponse
+    from pathlib import Path as _P
+
+    @mcp.custom_route("/console", methods=["GET"], include_in_schema=False)
+    async def _console(request: Request):
+        return HTMLResponse((_P(__file__).parent / "static" / "console.html").read_text())
+
+    @mcp.custom_route("/api/state", methods=["GET"], include_in_schema=False)
+    async def _state(request: Request):
+        return JSONResponse(_public_state(), headers={"Cache-Control": "no-store"})
+except Exception as _e:  # console is optional; MCP tools never depend on it
+    _log(f"console disabled: {_e}")
+
+
 def main():
     import argparse
     ap = argparse.ArgumentParser()
