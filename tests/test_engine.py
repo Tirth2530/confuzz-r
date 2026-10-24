@@ -248,6 +248,28 @@ class TestSupervisorIncidents(unittest.TestCase):
         self.assertTrue(all(a.type != "CANCEL_SESSION" for a in fixing_repairs(w, frozenset({"D1", "D2", "D4"}), k=50)))
 
 
+class TestAnnouncements(unittest.TestCase):
+    def test_announce_refused_before_apply_and_allowed_after(self):
+        s = Session.new("demo", budget=20)
+        r = s.report_incident("ROOM_CLOSED", "D", "leak")
+        p = s.propose_repair([r["failure_id"]], [{"type": "ACTIVATE_STANDBY", "room": "F"}], "t", None)
+        rid = p["repair_id"]
+        with self.assertRaises(RuleViolation):
+            s.send_announcements(rid, [{"audience": "all", "text": "x"}])
+        s.attack(rid, ["D6"], "t", "capacity"); s.verify(rid)
+        notes = s.apply(rid, "t")["notify"]
+        self.assertTrue(notes and all(n.get("audience") and n.get("message") for n in notes))
+        self.assertEqual(s.send_announcements(rid, [{"audience": "Attendees", "text": "Moved to Ballroom F"}])["published"], 1)
+
+    def test_inventory_notifications_name_sites_and_suppliers(self):
+        s = Session.new("inventory", budget=20)
+        s.minimize(["D1", "D5", "D8"])
+        s.propose_repair(["F1"], [{"type": "DUAL_SOURCE", "sku": "FOR"}], "t", None)
+        s.attack("R1", ["D2"], "t", "storage"); s.verify("R1")
+        notes = s.apply("R1", "t")["notify"]
+        self.assertTrue(any(n["change"] == "DUAL_SOURCE" and "NutriCo" in n["audience"] for n in notes))
+
+
 class TestIsolation(unittest.TestCase):
     AGENT_FACING = ["mcp_server.py", "session.py", "search.py", "repair.py", "certificate.py", "sim.py", "world.py", "llm.py", "space.py", "inventory.py", "domain.py"]
 

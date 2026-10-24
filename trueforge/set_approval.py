@@ -30,7 +30,7 @@ servers = manifest.get("mcp_servers", [])
 hit = [s for s in servers if s.get("name") == a.server_name]
 if not hit:
     raise SystemExit(f"no MCP server named {a.server_name!r} on this agent; found {[s.get('name') for s in servers]}")
-hit[0]["require_approval_for_tools"] = ["apply_repair", "reset_session"]
+hit[0]["require_approval_for_tools"] = ["apply_repair", "send_announcements", "reset_session"]
 print(json.dumps(hit[0], indent=1))
 if a.dry_run:
     raise SystemExit("dry run: nothing sent")

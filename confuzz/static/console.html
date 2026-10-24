@@ -113,8 +113,9 @@ let last="";
 function render(S){
   const sel=$("room"); if(!sel.options.length&&S.rooms){S.rooms.forEach(r=>{const o=document.createElement("option");o.value=r.id;o.textContent=r.name;sel.appendChild(o)})}
   $("rep").hidden=S.domain!=="conference";
+  document.querySelector("#rep").closest(".pane").querySelector("h2").textContent=S.domain==="conference"?"Report an incident":"Incidents are reported in chat for this domain";
   $("incidents").innerHTML=(S.incidents||[]).length?S.incidents.map(i=>`<div>${esc(i.id)} · ${esc(i.label)}<span class="chip ${i.status}">${i.status}</span>${i.failure_id?` · breaks the schedule (${esc(i.failure_id)})`:i.status==="absorbed"?" · handled by the playbook; check what-ifs":""}</div>`).join(""):`<div class="empty">No incidents reported.</div>`;
-  $("notify").innerHTML=(S.notifications||[]).length?S.notifications.map(n=>`<div><b>${esc(n.speaker)}</b> · ${esc(n.title)}: ${n.change==="CANCELED"?"canceled":`room ${esc(n.from)} → <b>${esc(n.to)}</b>`} (slot ${n.slot})</div>`).join(""):`<div class="empty">Appears when a fix is approved and applied.</div>`;
+  $("notify").innerHTML=(S.notifications||[]).length?S.notifications.map(n=>`<div><b>${esc(n.audience)}</b>: ${esc(n.message)}</div>`).join("")+`<div class="msg">${(S.announcements_published||0)?`Announcements published to the <a href="/board" target="_blank" rel="noopener">attendee board</a>.`:`Not announced yet: the agent drafts messages and send_announcements waits for approval.`}</div>`:`<div class="empty">Appears when a fix is approved and applied.</div>`;
   $("world").textContent=S.world.name;
   $("scripted").hidden=!S.scripted;
   const k=PHASES.indexOf(S.phase);

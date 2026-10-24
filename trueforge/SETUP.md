@@ -46,8 +46,8 @@ Use `127.0.0.1`, not `localhost` (a dotless hostname is denied unless listed).
   `propose_repair`, `verify_repair`, `submit_interaction_model`, `explain_interaction`) honestly declare
   `readOnlyHint=false` because they change session state, **so by default every experiment would pause
   for approval**. Turn the shield **off** for those (the "Other Actions" header switch does it in one
-  click) and keep it **on** for `apply_repair` and `reset_session` (the "Destructive Actions" group).
-  Target state: `require_approval_for_tools = ["apply_repair", "reset_session"]`.
+  click) and keep it **on** for `apply_repair`, `send_announcements` and `reset_session` (the "Destructive Actions" group).
+  Target state: `require_approval_for_tools = ["apply_repair", "send_announcements", "reset_session"]`.
   Check it on the agent's **Overview** tab (MCP Servers & Tools shows the shield per tool).
   API fallback: `python trueforge/set_approval.py --agent <id> --dry-run`, then without `--dry-run`.
 

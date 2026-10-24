@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live Updates Board</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: venue departures board. Announcements on top (what changed for me), full schedule below. Read-only. */
+:root{--bg:#0f1318;--panel:#171c23;--ink:#eef1f5;--ink-2:#a9b1bd;--rule:#2a313b;--moved:#f2b13b;--closed:#ff6b66;--ok:#4cc38a;
+  --sans:"Instrument Sans",ui-sans-serif,system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--sans)}
+.wrap{max-width:1100px;margin:0 auto;padding:24px max(16px,env(safe-area-inset-left,0px));display:grid;gap:18px}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px}
+h1{margin:0;font-size:clamp(22px,4vw,32px);font-weight:600}
+.sub{color:var(--ink-2);font-size:14px}
+.ann{display:grid;gap:10px}
+.msg{background:var(--panel);border:1px solid var(--rule);border-left:4px solid var(--moved);border-radius:6px;padding:12px 14px}
+.msg .aud{font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--moved)}
+.msg .txt{font-size:17px;margin-top:2px}
+.msg .t{font:12px var(--mono);color:var(--ink-2);margin-top:4px}
+.closed{background:color-mix(in srgb,var(--closed) 15%,transparent);border:1px solid var(--closed);color:var(--ink);border-radius:6px;padding:10px 14px}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);text-align:left;padding:8px;border-bottom:1px solid var(--rule)}
+td{padding:10px 8px;border-bottom:1px solid var(--rule);vertical-align:top}
+td.room{font:600 15px var(--mono);white-space:nowrap}
+.badge{font:600 11px var(--mono);padding:2px 7px;border-radius:4px;margin-left:8px;white-space:nowrap}
+.badge.MOVED{color:#111;background:var(--moved)} .badge.CANCELED{color:#111;background:var(--closed)}
+.was{display:block;font:12px var(--mono);color:var(--ink-2)}
+.empty{color:var(--ink-2)}
+h2{font:600 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin:6px 0 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1 id="name">Live updates</h1><span class="sub" id="upd">connecting</span></header>
+  <h2>Announcements</h2>
+  <div class="ann" id="ann"></div>
+  <div id="closed"></div>
+  <h2 id="tabletitle">Schedule</h2>
+  <div class="tablewrap"><table id="tbl"></table></div>
+  <p class="sub">Changes appear here only after an organizer approves them.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id), esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let last="";
+function render(B){
+  $("name").textContent=B.domain==="conference"?"DevConf live updates":"Network supply updates";
+  const msgs=[];B.announcements.forEach(b=>b.messages.forEach(m=>msgs.push({...m,t:b.t})));
+  $("ann").innerHTML=msgs.length?msgs.map(m=>`<div class="msg"><div class="aud">${esc(m.audience)}</div><div class="txt">${esc(m.text)}</div><div class="t">${new Date(m.t*1000).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})}</div></div>`).join(""):`<div class="empty">No changes announced.</div>`;
+  $("closed").innerHTML=(B.closed_rooms||[]).length?`<div class="closed">Closed: ${B.closed_rooms.map(esc).join(", ")}. Sessions there have moved; see below.</div>`:"";
+  if(B.domain==="conference"){
+    $("tabletitle").textContent="Schedule";
+    $("tbl").innerHTML=`<thead><tr><th>Slot</th><th>Session</th><th>Room</th></tr></thead><tbody>`+B.rows.map(r=>`<tr><td>${r.slot}</td><td>${esc(r.title)}<span class="was">${esc(r.speaker)}</span></td><td class="room">${r.room?esc(r.room):"—"}${r.status?`<span class="badge ${r.status}">${r.status}</span>`:""}${r.status==="MOVED"?`<span class="was">was ${esc(r.was)}</span>`:""}</td></tr>`).join("")+`</tbody>`;
+  }else{
+    $("tabletitle").textContent="Critical supply over the next 7 days";
+    $("tbl").innerHTML=`<thead><tr><th>Site</th><th>Item</th><th>Units available</th></tr></thead><tbody>`+B.rows.map(r=>`<tr><td>${esc(r.site)}</td><td>${esc(r.sku)}</td><td class="room">${r.available}</td></tr>`).join("")+`</tbody>`;
+  }
+}
+async function poll(){
+  try{const r=await fetch("/api/board",{cache:"no-store"});const t=await r.text();
+    $("upd").textContent="updated "+new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit",second:"2-digit"});
+    if(t!==last){last=t;render(JSON.parse(t));}
+  }catch(e){$("upd").textContent="reconnecting";}
+  setTimeout(poll,2000);
+}
+poll();
+</script>
+</body>
+</html>
