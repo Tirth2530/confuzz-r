@@ -34,7 +34,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from confuzz.scenarios import repair_diff, scenarios  # noqa: E402
+from confuzz.scenarios import classify, minimal_regressions, repair_diff, scenarios  # noqa: E402
 from confuzz.space import all_perturbations  # noqa: E402
 
 KS = [1, 2, 3, 5, 10, 20]
@@ -112,9 +112,19 @@ def main():
                 q = queries_to_ce(order(c, s, seed, llm.get(s.id)), s.regressions, a.budget)
                 res[c].append(q)
                 rows.append({"scenario": s.id, "condition": c, "seed": seed, "queries_to_counterexample": q})
-    summary = {c: summarize(v, a.budget) | {f"success@{k}": round(float(np.mean([x is not None and x <= k for x in v])), 4) for k in KS}
-               for c, v in res.items()}
-    meta = [{"id": s.id, "repair": repair_diff(s)["described"], "target": sorted(s.target),
+    def succ(v):
+        return {f"success@{k}": round(float(np.mean([x is not None and x <= k for x in v])), 4) for k in KS} if v else {}
+    summary = {c: summarize(v, a.budget) | succ(v) for c, v in res.items()}
+    label = {s.id: classify(s) for s in sc}
+    by_class = {}
+    for cls in ("DIRECT", "INDIRECT"):
+        ids = {k for k, v in label.items() if v == cls}
+        by_class[cls] = {"n_scenarios": len(ids)}
+        for c in conds:
+            v = [r["queries_to_counterexample"] for r in rows if r["condition"] == c and r["scenario"] in ids]
+            by_class[cls][c] = (summarize(v, a.budget) | succ(v)) if v else None
+    meta = [{"id": s.id, "repair": repair_diff(s)["described"], "target": sorted(s.target), "class": label[s.id],
+             "minimal_regressions": [sorted(r) for r in minimal_regressions(s)][:10],
              "n_regressions": len(s.regressions), "min_regression_order": min(len(r) for r in s.regressions),
              "regression_fraction_of_space": round(len(s.regressions) / 255, 4)} for s in sc]
     try:
@@ -122,7 +132,9 @@ def main():
     except Exception:
         commit = "unknown"
     tag = a.tag or f"critic_{a.split}"
-    out = {"config": vars(a), "git_commit": commit, "scenarios": meta, "summary": summary, "llm": llm_records,
+    out = {"config": vars(a), "git_commit": commit, "scenarios": meta, "summary": summary, "by_class": by_class,
+           "class_definition": "DIRECT if some minimal regression's simulator violation lands on a session, room or speaker the repair changed; else INDIRECT (confuzz/scenarios.py)",
+           "llm": llm_records,
            "rows": rows, "wall_clock_s": round(time.time() - t0, 1),
            "note": "openai_critic is deterministic given its cached list; seeds only vary its random fallback"}
     (ROOT / "experiments" / "results" / f"{tag}.json").write_text(json.dumps(out, indent=1))
@@ -131,6 +143,11 @@ def main():
     for c in conds:
         s = summary[c]
         print(f"{c:14s} median q-to-CE {s['median']:.1f}  " + " ".join(f"S@{k}={s[f'success@{k}']:.2f}" for k in KS))
+    for cls, d in by_class.items():
+        print(f"--- {cls} (n={d['n_scenarios']} scenarios)")
+        for c in conds:
+            if d[c]:
+                print(f"  {c:14s} median {d[c]['median']:.1f}  " + " ".join(f"S@{k}={d[c][f'success@{k}']:.2f}" for k in (1, 3, 10)))
 
 
 if __name__ == "__main__":

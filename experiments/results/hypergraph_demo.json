@@ -1,0 +1,475 @@
+{
+ "source": "scripted",
+ "world": "demo",
+ "nodes": [
+  {
+   "id": "D1",
+   "kind": "SURGE",
+   "label": "Keynote demand surge (+36%)"
+  },
+  {
+   "id": "D2",
+   "kind": "ROOM_LOSS",
+   "label": "Grand Hall A unavailable (HVAC failure)"
+  },
+  {
+   "id": "D3",
+   "kind": "ROUTE_CLOSED",
+   "label": "South-wing step-free route closed (lift outage)"
+  },
+  {
+   "id": "D4",
+   "kind": "SPEAKER_DELAY",
+   "label": "Keynote speaker runs 5 min late"
+  },
+  {
+   "id": "D5",
+   "kind": "AV_FAIL",
+   "label": "Room E projector failure"
+  },
+  {
+   "id": "D6",
+   "kind": "ROOM_LOSS",
+   "label": "Room B unavailable"
+  },
+  {
+   "id": "D7",
+   "kind": "SURGE",
+   "label": "GPU deep dive demand surge (+15%)"
+  },
+  {
+   "id": "D8",
+   "kind": "SURGE",
+   "label": "Data Contracts demand surge (+20%)"
+  }
+ ],
+ "stages": [
+  {
+   "id": "hidden",
+   "title": "Hidden failure structure (exhaustive, evaluator only)",
+   "edges": [
+    {
+     "set": [
+      "D2",
+      "D5"
+     ],
+     "order": 2,
+     "severity": 0.533,
+     "constraints": [
+      "capacity"
+     ],
+     "detail": [
+      "capacity 90, demand 150"
+     ],
+     "status": null
+    },
+    {
+     "set": [
+      "D2",
+      "D6"
+     ],
+     "order": 2,
+     "severity": 0.178,
+     "constraints": [
+      "capacity"
+     ],
+     "detail": [
+      "capacity 90, demand 110"
+     ],
+     "status": null
+    },
+    {
+     "set": [
+      "D1",
+      "D2",
+      "D3"
+     ],
+     "order": 3,
+     "severity": 0.155,
+     "constraints": [
+      "capacity"
+     ],
+     "detail": [
+      "capacity 160, demand 191"
+     ],
+     "status": null
+    },
+    {
+     "set": [
+      "D1",
+      "D2",
+      "D4"
+     ],
+     "order": 3,
+     "severity": 0.067,
+     "constraints": [
+      "transition"
+     ],
+     "detail": [
+      "gap 15 - delay 5 - travel South->North 12"
+     ],
+     "status": null
+    },
+    {
+     "set": [
+      "D3",
+      "D5",
+      "D6"
+     ],
+     "order": 3,
+     "severity": 1.8,
+     "constraints": [
+      "av"
+     ],
+     "detail": [
+      "room E has no working AV",
+      "room E has no working AV",
+      "room E has no working AV"
+     ],
+     "status": null
+    }
+   ]
+  },
+  {
+   "id": "discovered",
+   "title": "Discovered by search (paid queries only)",
+   "edges": [
+    {
+     "set": [
+      "D2",
+      "D5"
+     ],
+     "order": 2,
+     "severity": 0.533,
+     "constraints": [
+      "capacity"
+     ],
+     "detail": [
+      "capacity 90, demand 150"
+     ],
+     "status": "undiscovered"
+    },
+    {
+     "set": [
+      "D2",
+      "D6"
+     ],
+     "order": 2,
+     "severity": 0.178,
+     "constraints": [
+      "capacity"
+     ],
+     "detail": [
+      "capacity 90, demand 110"
+     ],
+     "status": "undiscovered"
+    },
+    {
+     "set": [
+      "D1",
+      "D2",
+      "D3"
+     ],
+     "order": 3,
+     "severity": 0.155,
+     "constraints": [
+      "capacity"
+     ],
+     "detail": [
+      "capacity 160, demand 191"
+     ],
+     "status": "undiscovered"
+    },
+    {
+     "set": [
+      "D1",
+      "D2",
+      "D4"
+     ],
+     "order": 3,
+     "severity": 0.067,
+     "constraints": [
+      "transition"
+     ],
+     "detail": [
+      "gap 15 - delay 5 - travel South->North 12"
+     ],
+     "status": "discovered"
+    },
+    {
+     "set": [
+      "D3",
+      "D5",
+      "D6"
+     ],
+     "order": 3,
+     "severity": 1.8,
+     "constraints": [
+      "av"
+     ],
+     "detail": [
+      "room E has no working AV",
+      "room E has no working AV",
+      "room E has no working AV"
+     ],
+     "status": "discovered"
+    }
+   ]
+  },
+  {
+   "id": "R1",
+   "title": "After R1: swap rooms of S10 and S12",
+   "repair_status": "REPAIR_REJECTED",
+   "counterexamples_found_by_critic": [
+    [
+     "D4"
+    ]
+   ],
+   "edges": [
+    {
+     "set": [
+      "D3"
+     ],
+     "order": 1,
+     "severity": 1.0,
+     "constraints": [
+      "accessibility"
+     ],
+     "detail": [
+      "zone South step-free route closed"
+     ],
+     "status": "regression"
+    },
+    {
+     "set": [
+      "D4"
+     ],
+     "order": 1,
+     "severity": 0.067,
+     "constraints": [
+      "transition"
+     ],
+     "detail": [
+      "gap 15 - delay 5 - travel North->South 12"
+     ],
+     "status": "regression"
+    },
+    {
+     "set": [
+      "D5"
+     ],
+     "order": 1,
+     "severity": 0.6,
+     "constraints": [
+      "av"
+     ],
+     "detail": [
+      "room E has no working AV"
+     ],
+     "status": "regression"
+    },
+    {
+     "set": [
+      "D8"
+     ],
+     "order": 1,
+     "severity": 0.1,
+     "constraints": [
+      "capacity"
+     ],
+     "detail": [
+      "capacity 160, demand 180"
+     ],
+     "status": "regression"
+    },
+    {
+     "set": [
+      "D2",
+      "D6"
+     ],
+     "order": 2,
+     "severity": 0.178,
+     "constraints": [
+      "capacity"
+     ],
+     "detail": [
+      "capacity 90, demand 110"
+     ],
+     "status": "kept"
+    },
+    {
+     "set": [
+      "D2",
+      "D5"
+     ],
+     "order": 2,
+     "severity": 0.533,
+     "constraints": [
+      "capacity"
+     ],
+     "detail": [
+      "capacity 90, demand 150"
+     ],
+     "status": "subsumed"
+    },
+    {
+     "set": [
+      "D1",
+      "D2",
+      "D3"
+     ],
+     "order": 3,
+     "severity": 0.155,
+     "constraints": [
+      "capacity"
+     ],
+     "detail": [
+      "capacity 160, demand 191"
+     ],
+     "status": "subsumed"
+    },
+    {
+     "set": [
+      "D1",
+      "D2",
+      "D4"
+     ],
+     "order": 3,
+     "severity": 0.067,
+     "constraints": [
+      "transition"
+     ],
+     "detail": [
+      "gap 15 - delay 5 - travel South->North 12"
+     ],
+     "status": "fixed"
+    },
+    {
+     "set": [
+      "D3",
+      "D5",
+      "D6"
+     ],
+     "order": 3,
+     "severity": 1.8,
+     "constraints": [
+      "av"
+     ],
+     "detail": [
+      "room E has no working AV",
+      "room E has no working AV",
+      "room E has no working AV"
+     ],
+     "status": "subsumed"
+    }
+   ]
+  },
+  {
+   "id": "R2",
+   "title": "After R2: activate standby room F; move S07 to room F",
+   "repair_status": "VERIFIED_ON_TEST_SET",
+   "counterexamples_found_by_critic": [],
+   "edges": [
+    {
+     "set": [
+      "D2",
+      "D3",
+      "D5",
+      "D6"
+     ],
+     "order": 4,
+     "severity": 1.8,
+     "constraints": [
+      "av"
+     ],
+     "detail": [
+      "room E has no working AV",
+      "room E has no working AV",
+      "room E has no working AV"
+     ],
+     "status": "residual"
+    },
+    {
+     "set": [
+      "D2",
+      "D5"
+     ],
+     "order": 2,
+     "severity": 0.533,
+     "constraints": [
+      "capacity"
+     ],
+     "detail": [
+      "capacity 90, demand 150"
+     ],
+     "status": "fixed"
+    },
+    {
+     "set": [
+      "D2",
+      "D6"
+     ],
+     "order": 2,
+     "severity": 0.178,
+     "constraints": [
+      "capacity"
+     ],
+     "detail": [
+      "capacity 90, demand 110"
+     ],
+     "status": "fixed"
+    },
+    {
+     "set": [
+      "D1",
+      "D2",
+      "D3"
+     ],
+     "order": 3,
+     "severity": 0.155,
+     "constraints": [
+      "capacity"
+     ],
+     "detail": [
+      "capacity 160, demand 191"
+     ],
+     "status": "fixed"
+    },
+    {
+     "set": [
+      "D1",
+      "D2",
+      "D4"
+     ],
+     "order": 3,
+     "severity": 0.067,
+     "constraints": [
+      "transition"
+     ],
+     "detail": [
+      "gap 15 - delay 5 - travel South->North 12"
+     ],
+     "status": "fixed"
+    },
+    {
+     "set": [
+      "D3",
+      "D5",
+      "D6"
+     ],
+     "order": 3,
+     "severity": 1.8,
+     "constraints": [
+      "av"
+     ],
+     "detail": [
+      "room E has no working AV",
+      "room E has no working AV",
+      "room E has no working AV"
+     ],
+     "status": "fixed"
+    }
+   ]
+  }
+ ]
+}

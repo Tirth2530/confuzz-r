@@ -19,7 +19,7 @@ from dataclasses import asdict
 from pathlib import Path
 
 from .certificate import risk_certificate
-from .repair import ACTION_TYPES, Action, apply_actions, instantiate
+from .repair import ACTION_TYPES, Action, apply_actions, instantiate_plan
 from .search import AdaptiveGroupTesting, SemanticPrior, candidates as _candidates, Oracle
 from .sim import simulate
 from .world import World, demo_world, generate_world
@@ -238,21 +238,16 @@ class Session:
         if not steps:
             raise RuleViolation("give at least one strategy step")
         base = self.base_world()
-        actions, total, checks, notes = [], 0.0, 0, []
-        for i, st in enumerate(steps):
+        for st in steps:
             if st.get("type") not in ACTION_TYPES:
                 raise RuleViolation(f"step type must be one of {ACTION_TYPES}")
-            # intermediate steps only need validity; the last step must fix every target
-            tgt = targets if i == len(steps) - 1 else []
-            inst = instantiate(base, tgt, st, actions)
-            checks += inst.checks
-            if inst.action is None:
-                self.s["solver_checks"] += checks
-                self.event("SOLVER", "no_instantiation", step=st, reason=inst.reason)
-                raise RuleViolation(f"step {i + 1} {st}: {inst.reason}")
-            actions.append(inst.action)
-            total += inst.cost
-            notes.append(inst.reason)
+        inst = instantiate_plan(base, targets, steps)
+        checks = inst.checks
+        if not inst.plan:
+            self.s["solver_checks"] += checks
+            self.event("SOLVER", "no_instantiation", steps=steps, reason=inst.reason)
+            raise RuleViolation(f"strategy {steps}: {inst.reason}")
+        actions, total, notes = inst.plan, inst.cost, [inst.reason]
         self.s["solver_checks"] += checks
         rid = f"R{len(self.s['repairs']) + 1}"
         patched = apply_actions(base, actions)

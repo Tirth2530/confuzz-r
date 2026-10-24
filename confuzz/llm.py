@@ -162,3 +162,65 @@ def critic_attacks(world: World, diff: dict, target: list[str], model: str = MOD
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(rec, indent=1))
     return rec
+
+
+# ---------------------------------------------------------------------------
+# Blue (benchmark mode). Live runs use propose_repair inside TrueForge with the same brief.
+# ---------------------------------------------------------------------------
+BLUE_SYSTEM = """You are BLUE, a conference-operations repair strategist. You receive a confirmed failure
+(the minimal set of disruptions that breaks the schedule, the simulator's violations and the
+operations playbook's moves). Propose repair STRATEGIES that break the causal mechanism, not just the
+symptom, and that avoid creating new failures elsewhere. A deterministic solver instantiates each
+strategy (cheapest concrete action of that type that fixes the target) and an exact verifier decides
+whether it is accepted. You never see verification results you were not given."""
+
+_STEP = {"type": "object", "additionalProperties": False,
+         "required": ["type", "session", "session2", "room", "slot"],
+         "properties": {"type": {"type": "string", "enum": ["MOVE_SESSION", "SWAP_ROOMS", "SHIFT_SESSION", "ACTIVATE_STANDBY"]},
+                        "session": {"type": ["string", "null"]}, "session2": {"type": ["string", "null"]},
+                        "room": {"type": ["string", "null"]}, "slot": {"type": ["integer", "null"]}}}
+BLUE_SCHEMA = {"name": "blue_strategies", "strict": True, "schema": {
+    "type": "object", "additionalProperties": False, "required": ["strategies"],
+    "properties": {"strategies": {"type": "array", "items": {
+        "type": "object", "additionalProperties": False,
+        "required": ["steps", "mechanism_broken", "risk_of_new_failure", "what_changed_in_my_reasoning"],
+        "properties": {"steps": {"type": "array", "items": _STEP},
+                       "mechanism_broken": {"type": "string"},
+                       "risk_of_new_failure": {"type": "string"},
+                       "what_changed_in_my_reasoning": {"type": "string"}}}}}}}
+
+
+def blue_prompt(world: World, trace: dict, history: list[dict]) -> str:
+    spec = world.public_spec()
+    spec.pop("world_id", None)
+    h = ""
+    if history:
+        h = ("\nYour earlier proposals and what the verifier found (a counterexample is a disruption set that "
+             "passed before your repair and fails after it):\n" + json.dumps(history, indent=1) +
+             "\nFill what_changed_in_my_reasoning and propose materially different strategies.")
+    return ("Return JSON {strategies: [...]}: up to 3 strategies, best first. Each has 1 or 2 steps. "
+            "Leave a field null to let the solver choose it. Use ACTIVATE_STANDBY only for standby rooms.\n\n"
+            f"Conference specification:\n{json.dumps(spec, indent=1)}\n\nConfirmed failure:\n{json.dumps(trace, indent=1)}{h}")
+
+
+def blue_strategies(world: World, trace: dict, history: list[dict], model: str = MODEL, use_cache: bool = True) -> dict:
+    prompt = blue_prompt(world, trace, history)
+    key = hashlib.sha256((model + "\n" + BLUE_SYSTEM + "\n" + prompt).encode()).hexdigest()
+    path = CACHE_DIR / f"blue_{key}.json"
+    if use_cache and path.exists():
+        rec = json.loads(path.read_text()); rec["from_cache"] = True
+        return rec
+    from openai import OpenAI
+    t0 = time.time()
+    resp = OpenAI().chat.completions.create(
+        model=model, messages=[{"role": "system", "content": BLUE_SYSTEM}, {"role": "user", "content": prompt}],
+        response_format={"type": "json_schema", "json_schema": BLUE_SCHEMA})
+    out = json.loads(resp.choices[0].message.content)
+    for st in out["strategies"]:
+        st["steps"] = [{k: v for k, v in step.items() if v is not None} for step in st["steps"]][:2]
+    rec = {"model": model, "mode": "direct_openai_api", "world_id": world.id, "output": out,
+           "usage": {"prompt_tokens": resp.usage.prompt_tokens, "completion_tokens": resp.usage.completion_tokens},
+           "latency_s": round(time.time() - t0, 2), "created": time.time(), "from_cache": False}
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(rec, indent=1))
+    return rec

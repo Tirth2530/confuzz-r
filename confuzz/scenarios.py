@@ -3,7 +3,8 @@
 A scenario = (world, target minimal failure m, repair a) where a is one of the 3 cheapest single
 actions that make m pass and keep the base passing (what the solver could hand Blue), restricted
 to repairs with at least one regression (otherwise there is nothing to find).
-Scenario sets (fixed before any Critic condition ran on frozen data): 60 worlds per split.
+Scenario sets (fixed before any Critic condition ran on frozen data): 200 worlds per split.
+History: 60 worlds gave only 7 frozen INDIRECT scenarios (counted, no method run), too few; widened to 200.
 v0 (cheapest repair only, 20 worlds) gave 12 dev / 5 frozen scenarios: too few; superseded.
 Hidden answer: R(a) = perturbations that pass on the original and fail on the patched world.
 
@@ -43,7 +44,7 @@ def fixing_repairs(world: World, target: frozenset[str], k: int = 3) -> list[Act
     return sorted(fixing, key=lambda a: (action_cost(world, a), str(a.to_dict())))[:k]
 
 
-def scenarios(split: str, n_worlds: int = 60) -> list[Scenario]:
+def scenarios(split: str, n_worlds: int = 200) -> list[Scenario]:
     worlds = frozen_worlds(n_worlds, DEV_START if split == "dev" else FROZEN_START)
     out = []
     for w in worlds:
@@ -70,3 +71,44 @@ def repair_diff(s: Scenario) -> dict:
     activated = sorted(p.active_standby - w.active_standby)
     return {"action": s.action.to_dict(), "described": s.action.describe(w),
             "moved_sessions": moved, "activated_standby_rooms": activated}
+
+
+# ---------------------------------------------------------------------------
+# DIRECT vs INDIRECT regressions. Pre-registered before any OpenAI Critic run on frozen data.
+#
+# Changed entities E(a): sessions the repair moved, their speakers, the rooms they left and entered,
+# and any standby room the repair activated.
+# Minimal regression: r in R(a) such that no proper subset of r is in R(a).
+# A minimal regression r is DIRECT if any violation the simulator reports on the patched world under
+# r lands on a changed entity (its session, room or speaker is in E(a), or a speaker pair includes a
+# moved session). Otherwise it is INDIRECT: the failure surfaces on entities the repair never touched,
+# so it propagates through freed or consumed slack, playbook choices, or shared resources.
+# A scenario is DIRECT if at least one minimal regression is direct, else INDIRECT.
+# (Labels come from simulator violation records only; no LLM is involved.)
+# ---------------------------------------------------------------------------
+def changed_entities(s: Scenario) -> dict[str, set[str]]:
+    d = repair_diff(s)
+    return {
+        "sessions": {m["session"] for m in d["moved_sessions"]},
+        "speakers": {m["speaker"] for m in d["moved_sessions"]},
+        "rooms": {m["from"]["room"] for m in d["moved_sessions"]} | {m["to"]["room"] for m in d["moved_sessions"]}
+                 | set(d["activated_standby_rooms"]),
+    }
+
+
+def minimal_regressions(s: Scenario) -> list[frozenset[str]]:
+    return sorted((r for r in s.regressions if not any(q < r for q in s.regressions)), key=lambda r: (len(r), sorted(r)))
+
+
+def regression_is_direct(s: Scenario, r: frozenset[str]) -> bool:
+    E = changed_entities(s)
+    for v in simulate(s.patched, r).violations:
+        if v.get("session") in E["sessions"] or v.get("room") in E["rooms"] or v.get("speaker") in E["speakers"]:
+            return True
+        if set(v.get("sessions", [])) & E["sessions"]:
+            return True
+    return False
+
+
+def classify(s: Scenario) -> str:
+    return "DIRECT" if any(regression_is_direct(s, r) for r in minimal_regressions(s)) else "INDIRECT"

@@ -1,6 +1,6 @@
 [
  {
-  "t": 1792867972.79,
+  "t": 1792869673.88,
   "actor": "SCORER",
   "kind": "rank",
   "top": [
@@ -18,7 +18,7 @@
   "uses_llm_prior": false
  },
  {
-  "t": 1792867972.79,
+  "t": 1792869673.88,
   "actor": "RED",
   "kind": "simulate",
   "index": 1,
@@ -47,14 +47,14 @@
   ]
  },
  {
-  "t": 1792867972.8,
+  "t": 1792869673.89,
   "actor": "ENGINE",
   "kind": "phase",
   "from_": "DISCOVER",
   "to": "REPRODUCE"
  },
  {
-  "t": 1792867972.8,
+  "t": 1792869673.89,
   "actor": "RED",
   "kind": "simulate",
   "index": 2,
@@ -81,7 +81,7 @@
   ]
  },
  {
-  "t": 1792867972.8,
+  "t": 1792869673.89,
   "actor": "RED",
   "kind": "simulate",
   "index": 3,
@@ -102,7 +102,7 @@
   ]
  },
  {
-  "t": 1792867972.8,
+  "t": 1792869673.89,
   "actor": "RED",
   "kind": "simulate",
   "index": 4,
@@ -118,7 +118,7 @@
   "violations": []
  },
  {
-  "t": 1792867972.8,
+  "t": 1792869673.89,
   "actor": "RED",
   "kind": "simulate",
   "index": 5,
@@ -138,7 +138,7 @@
   ]
  },
  {
-  "t": 1792867972.8,
+  "t": 1792869673.89,
   "actor": "RED",
   "kind": "simulate",
   "index": 6,
@@ -153,7 +153,7 @@
   "violations": []
  },
  {
-  "t": 1792867972.8,
+  "t": 1792869673.89,
   "actor": "RED",
   "kind": "simulate",
   "index": 7,
@@ -168,7 +168,7 @@
   "violations": []
  },
  {
-  "t": 1792867972.8,
+  "t": 1792869673.89,
   "actor": "RED",
   "kind": "simulate",
   "index": 8,
@@ -187,7 +187,7 @@
   ]
  },
  {
-  "t": 1792867972.8,
+  "t": 1792869673.89,
   "actor": "RED",
   "kind": "simulate",
   "index": 9,
@@ -205,7 +205,7 @@
   ]
  },
  {
-  "t": 1792867972.8,
+  "t": 1792869673.89,
   "actor": "ENGINE",
   "kind": "minimal_failure",
   "failure_id": "F1",
@@ -222,14 +222,14 @@
   ]
  },
  {
-  "t": 1792867972.8,
+  "t": 1792869673.89,
   "actor": "ENGINE",
   "kind": "phase",
   "from_": "REPRODUCE",
   "to": "REPAIR"
  },
  {
-  "t": 1792867972.8,
+  "t": 1792869673.9,
   "actor": "RED",
   "kind": "simulate",
   "index": 10,
@@ -245,14 +245,14 @@
   ]
  },
  {
-  "t": 1792867972.81,
+  "t": 1792869673.9,
   "actor": "ENGINE",
   "kind": "phase",
   "from_": "REPAIR",
   "to": "REPRODUCE"
  },
  {
-  "t": 1792867972.81,
+  "t": 1792869673.9,
   "actor": "RED",
   "kind": "simulate",
   "index": 11,
@@ -265,7 +265,7 @@
   "violations": []
  },
  {
-  "t": 1792867972.81,
+  "t": 1792869673.9,
   "actor": "RED",
   "kind": "simulate",
   "index": 12,
@@ -278,7 +278,7 @@
   "violations": []
  },
  {
-  "t": 1792867972.81,
+  "t": 1792869673.9,
   "actor": "RED",
   "kind": "simulate",
   "index": 13,
@@ -291,7 +291,7 @@
   "violations": []
  },
  {
-  "t": 1792867972.81,
+  "t": 1792869673.9,
   "actor": "ENGINE",
   "kind": "minimal_failure",
   "failure_id": "F2",
@@ -306,14 +306,14 @@
   ]
  },
  {
-  "t": 1792867972.81,
+  "t": 1792869673.9,
   "actor": "ENGINE",
   "kind": "phase",
   "from_": "REPRODUCE",
   "to": "REPAIR"
  },
  {
-  "t": 1792867972.81,
+  "t": 1792869673.9,
   "actor": "ENGINE",
   "kind": "simulate",
   "index": 14,
@@ -325,7 +325,7 @@
   "violations": []
  },
  {
-  "t": 1792867972.81,
+  "t": 1792869673.9,
   "actor": "ENGINE",
   "kind": "simulate",
   "index": 15,
@@ -337,7 +337,7 @@
   "violations": []
  },
  {
-  "t": 1792867972.81,
+  "t": 1792869673.9,
   "actor": "ENGINE",
   "kind": "simulate",
   "index": 16,
@@ -349,7 +349,7 @@
   "violations": []
  },
  {
-  "t": 1792867972.82,
+  "t": 1792869673.91,
   "actor": "BLUE",
   "kind": "repair_proposed",
   "repair_id": "R1",
@@ -360,14 +360,14 @@
   "revision": false
  },
  {
-  "t": 1792867972.82,
+  "t": 1792869673.91,
   "actor": "ENGINE",
   "kind": "phase",
   "from_": "REPAIR",
   "to": "ATTACK"
  },
  {
-  "t": 1792867972.83,
+  "t": 1792869673.92,
   "actor": "CRITIC",
   "kind": "attack",
   "repair_id": "R1",
@@ -380,7 +380,7 @@
   ]
  },
  {
-  "t": 1792867972.83,
+  "t": 1792869673.92,
   "actor": "ENGINE",
   "kind": "repair_rejected",
   "repair_id": "R1",
@@ -389,14 +389,14 @@
   ]
  },
  {
-  "t": 1792867972.83,
+  "t": 1792869673.92,
   "actor": "ENGINE",
   "kind": "phase",
   "from_": "ATTACK",
   "to": "REPAIR"
  },
  {
-  "t": 1792867972.83,
+  "t": 1792869673.92,
   "actor": "BLUE",
   "kind": "repair_proposed",
   "repair_id": "R2",
@@ -408,14 +408,14 @@
   "revision": true
  },
  {
-  "t": 1792867972.83,
+  "t": 1792869673.92,
   "actor": "ENGINE",
   "kind": "phase",
   "from_": "REPAIR",
   "to": "ATTACK"
  },
  {
-  "t": 1792867972.84,
+  "t": 1792869673.93,
   "actor": "CRITIC",
   "kind": "attack",
   "repair_id": "R2",
@@ -428,14 +428,14 @@
   "violations": []
  },
  {
-  "t": 1792867972.84,
+  "t": 1792869673.93,
   "actor": "ENGINE",
   "kind": "phase",
   "from_": "ATTACK",
   "to": "VERIFY"
  },
  {
-  "t": 1792867972.95,
+  "t": 1792869674.02,
   "actor": "RISK",
   "kind": "certificate",
   "repair_id": "R2",
@@ -444,7 +444,7 @@
   "failure_rate_after": 0.2025
  },
  {
-  "t": 1792867972.95,
+  "t": 1792869674.02,
   "actor": "ENGINE",
   "kind": "phase",
   "from_": "VERIFY",

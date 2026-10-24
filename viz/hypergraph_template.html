@@ -1,0 +1,145 @@
+<title>Failure Hypergraph</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: instrument panel. Stage selector on top, hypergraph plate left, edge ledger right; stacks on phones. */
+:root{
+  --bg:#f6f7f9; --panel:#ffffff; --ink:#14181f; --ink-2:#4a5260; --rule:#d9dde4; --muted:#9aa2ae;
+  --accent:#2a5bd7; --critical:#c8322f; --residual:#b7791f; --fixed:#2f8a5b;
+  --sans:"Instrument Sans",ui-sans-serif,system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0f1217;--panel:#161a21;--ink:#e7eaf0;--ink-2:#a9b0bc;--rule:#2a303a;--muted:#5f6876;--accent:#6f97ff;--critical:#ff6b66;--residual:#e3a541;--fixed:#4cc38a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1217;--panel:#161a21;--ink:#e7eaf0;--ink-2:#a9b0bc;--rule:#2a303a;--muted:#5f6876;--accent:#6f97ff;--critical:#ff6b66;--residual:#e3a541;--fixed:#4cc38a;color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding-block:28px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:18px}
+header{display:grid;gap:4px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
+h1{font-size:clamp(22px,3vw,30px);font-weight:600;margin:0;text-wrap:balance}
+.lede{color:var(--ink-2);max-width:68ch;margin:0}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs button{font:500 13px var(--sans);color:var(--ink-2);background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:7px 12px;cursor:pointer}
+.tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--accent);box-shadow:inset 0 -2px 0 var(--accent)}
+.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.plate{background:var(--panel);border:1px solid var(--rule);border-radius:8px;padding:12px}
+.plate svg{width:100%;height:auto;display:block}
+.caption{font-size:13px;color:var(--ink-2);margin:8px 4px 0}
+.ledger{display:grid;gap:10px;min-width:0}
+.stage-title{font-weight:600;margin:0}
+.status-line{font-family:var(--mono);font-size:12px;color:var(--ink-2)}
+.edge{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;padding:10px 12px;border-left:3px solid var(--rule);background:var(--panel);border-radius:0 6px 6px 0}
+.edge .set{font-family:var(--mono);font-weight:600;font-size:13px;white-space:nowrap}
+.edge .pill{justify-self:start;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:1px 7px;border-radius:4px;border:1px solid currentColor}
+.edge .det{grid-column:1/-1;font-size:12.5px;color:var(--ink-2);overflow-wrap:anywhere}
+.s-regression{border-left-color:var(--critical)} .s-regression .pill{color:var(--critical)}
+.s-residual{border-left-color:var(--residual)} .s-residual .pill{color:var(--residual)}
+.s-fixed{border-left-color:var(--fixed)} .s-fixed .pill{color:var(--fixed)}
+.s-kept,.s-hidden,.s-discovered{border-left-color:var(--accent)} .s-kept .pill,.s-hidden .pill,.s-discovered .pill{color:var(--accent)}
+.s-undiscovered,.s-subsumed{border-left-color:var(--muted)} .s-undiscovered .pill,.s-subsumed .pill{color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:18px;height:0;border-top:2px solid}
+.foot{font-size:12.5px;color:var(--ink-2);max-width:90ch}
+.foot code{font-family:var(--mono);font-size:12px}
+svg text{font-family:var(--mono)}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">CONFUZZ-R · <span id="src"></span></div>
+    <h1>Failure hypergraph of the demo conference</h1>
+    <p class="lede">Each dot on the ring is one atomic disruption. Each hub joins the disruptions of one minimal failing set: together they break the schedule, while every smaller subset passes. A ring around a single disruption means it now fails on its own.</p>
+  </header>
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div class="grid">
+    <div class="plate">
+      <svg id="g" viewBox="0 0 560 520" role="img" aria-labelledby="gtitle"><title id="gtitle">Failure hypergraph</title></svg>
+      <div class="legend" id="legend"></div>
+      <p class="caption" id="cap"></p>
+    </div>
+    <div class="ledger">
+      <p class="stage-title" id="st"></p>
+      <div class="status-line" id="sl"></div>
+      <div id="edges" class="ledger"></div>
+    </div>
+  </div>
+  <p class="foot">Every element is computed by the deterministic simulator: minimal sets come from exhaustive enumeration of all 256 disruption combinations, and labels compare the patched schedule with the original. <b>Regression</b>: passed before the repair, fails after it. <b>Residual</b>: already failed before, newly minimal because a smaller failure was fixed. <b>Subsumed</b>: still fails, because a smaller set now fails. <b>Fixed</b>: now passes. Source data: <code>experiments/results/hypergraph_demo.json</code>.</p>
+</div>
+
+<script>
+const DATA = __DATA__;
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const STATUS = {
+  null:{label:"failure",col:"--accent",dash:""}, hidden:{label:"failure",col:"--accent",dash:""},
+  discovered:{label:"discovered",col:"--accent",dash:""}, undiscovered:{label:"not yet found",col:"--muted",dash:"4 4"},
+  kept:{label:"still fails",col:"--accent",dash:""}, regression:{label:"new regression",col:"--critical",dash:""},
+  residual:{label:"residual",col:"--residual",dash:"6 3"}, fixed:{label:"fixed",col:"--fixed",dash:"2 4"},
+  subsumed:{label:"subsumed",col:"--muted",dash:"1 4"}
+};
+const nodes = DATA.nodes, cx=280, cy=250, R=185;
+const pos = {}; nodes.forEach((n,i)=>{const a=-Math.PI/2+i*2*Math.PI/nodes.length; pos[n.id]=[cx+R*Math.cos(a), cy+R*Math.sin(a), a];});
+const NS="http://www.w3.org/2000/svg";
+function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e;}
+let current = 0;
+function draw(i){
+  current=i; const st=DATA.stages[i], g=document.getElementById("g");
+  [...g.querySelectorAll(":scope > :not(title)")].forEach(x=>x.remove());
+  const ce = new Set((st.counterexamples_found_by_critic||[]).map(s=>s.join("+")));
+  st.edges.forEach((e,k)=>{
+    const s=STATUS[e.status]??STATUS.null, col=css(s.col);
+    if(e.set.length===1){
+      const [x,y]=pos[e.set[0]];
+      el("circle",{cx:x,cy:y,r:22,fill:"none",stroke:col,"stroke-width":2.5,"stroke-dasharray":s.dash},g);
+      if(ce.has(e.set[0])) el("circle",{cx:x,cy:y,r:29,fill:"none",stroke:col,"stroke-width":1,"stroke-dasharray":"2 3"},g);
+      return;
+    }
+    const pts=e.set.map(d=>pos[d]); let hx=pts.reduce((a,p)=>a+p[0],0)/pts.length, hy=pts.reduce((a,p)=>a+p[1],0)/pts.length;
+    hx=cx+(hx-cx)*0.62+((k%3)-1)*10; hy=cy+(hy-cy)*0.62+((k%2)?8:-8);
+    pts.forEach(p=>el("line",{x1:hx,y1:hy,x2:p[0],y2:p[1],stroke:col,"stroke-width":e.status==="fixed"||e.status==="subsumed"||e.status==="undiscovered"?1.4:2.2,"stroke-dasharray":s.dash,opacity:.9},g));
+    el("circle",{cx:hx,cy:hy,r:5+e.set.length,fill:col,stroke:css("--panel"),"stroke-width":2},g);
+    const lab=el("text",{x:hx,y:hy-12,"text-anchor":"middle","font-size":10,fill:css("--ink-2")},g); lab.textContent=e.set.length+"-way";
+  });
+  nodes.forEach(n=>{
+    const [x,y,a]=pos[n.id];
+    el("circle",{cx:x,cy:y,r:14,fill:css("--panel"),stroke:css("--ink"),"stroke-width":1.5},g);
+    const t=el("text",{x,y:y+4,"text-anchor":"middle","font-size":11,"font-weight":600,fill:css("--ink")},g); t.textContent=n.id;
+    const lx=cx+(R+30)*Math.cos(a), ly=cy+(R+30)*Math.sin(a);
+    const l=el("text",{x:lx,y:ly+3,"text-anchor":Math.abs(Math.cos(a))<.2?"middle":(Math.cos(a)>0?"start":"end"),"font-size":9.5,fill:css("--ink-2")},g);
+    l.textContent=n.kind.replace("_"," ").toLowerCase();
+  });
+  document.getElementById("st").textContent=st.title;
+  const counts={}; st.edges.forEach(e=>{const l=(STATUS[e.status]??STATUS.null).label;counts[l]=(counts[l]||0)+1;});
+  let sl=Object.entries(counts).map(([k,v])=>v+" "+k).join(" · ");
+  if(st.repair_status) sl+="  |  repair status: "+st.repair_status;
+  if(st.counterexamples_found_by_critic&&st.counterexamples_found_by_critic.length) sl+="  |  critic counterexample: {"+st.counterexamples_found_by_critic.map(s=>s.join("+")).join("}, {")+"} (dotted halo)";
+  document.getElementById("sl").textContent=sl;
+  const box=document.getElementById("edges"); box.replaceChildren();
+  st.edges.forEach(e=>{
+    const s=STATUS[e.status]??STATUS.null, d=document.createElement("div");
+    d.className="edge s-"+(e.status??"hidden");
+    const nm=e.set.map(id=>nodes.find(n=>n.id===id).label).join(" + ");
+    d.innerHTML=`<span class="set">{${e.set.join(", ")}}</span><span class="pill">${s.label}</span><div class="det">${nm}<br>${e.constraints.length?"violates "+e.constraints.join(", ")+" · ":""}severity ${e.severity}${e.detail&&e.detail[0]?" · "+e.detail[0]:""}</div>`;
+    box.appendChild(d);
+  });
+  const used=[...new Set(st.edges.map(e=>e.status??"hidden"))];
+  document.getElementById("legend").innerHTML=used.map(u=>{const s=STATUS[u]??STATUS.null;return `<span><i class="sw" style="border-top-color:var(${s.col});border-top-style:${s.dash?"dashed":"solid"}"></i>${s.label}</span>`}).join("");
+  document.getElementById("cap").textContent=CAPS[st.id]||"";
+  document.querySelectorAll("#tabs button").forEach((b,j)=>b.setAttribute("aria-selected",j===i));
+}
+const CAPS={
+  hidden:"Ground truth from enumerating all 256 combinations. Testing agents never see this view.",
+  discovered:"What a testing run actually paid for and confirmed. Unfound failures stay dashed.",
+  R1:"The cheapest repair fixes its target but makes four disruptions fail on their own. The critic needed one query to find one of them.",
+  R2:"The revised repair fixes all five original failures. One 4-way residual failure remains, and it already failed before."
+};
+const tabs=document.getElementById("tabs");
+DATA.stages.forEach((s,i)=>{const b=document.createElement("button");b.setAttribute("role","tab");b.id="tab-"+s.id;
+  b.textContent={hidden:"Hidden truth",discovered:"Discovered",R1:"After repair R1",R2:"After repair R2"}[s.id]||s.id;b.onclick=()=>draw(i);tabs.appendChild(b);});
+document.getElementById("src").textContent=DATA.source==="scripted"?"scripted engine run (no LLM)":DATA.source;
+const h=location.hash.slice(1); const start=Math.max(0,DATA.stages.findIndex(s=>s.id===h));
+draw(start);
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>draw(current));
+new MutationObserver(()=>draw(current)).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+</script>

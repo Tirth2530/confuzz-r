@@ -30,7 +30,7 @@ python experiments/figures.py experiments/results/v3_frozen.json
 OPENAI_API_KEY=... python experiments/critic_bench.py --split frozen \
     --conditions random,size_ordered,diff_guided,openai_critic --tag critic_frozen          # run ONCE
 ```
-TrueForge wiring: `trueforge/SETUP.md`. Agent instructions: `trueforge/AGENT_INSTRUCTIONS.md`.
+TrueForge wiring (verified against TrueForge source; HTTP MCP, loopback allowlist, approval defaults): `trueforge/SETUP.md`. Agent instructions: `trueforge/AGENT_INSTRUCTIONS.md`.
 
 ## Problem and definitions
 
@@ -111,24 +111,62 @@ are not prioritized. Each OpenAI role has a measurable ablation against a no-LLM
 
 ## Critic experiment
 
-Scenario: a world, one of its minimal failures, and one of the 3 cheapest single repairs that fix
-it but introduce at least one regression (hidden answer: the regression set, from exhaustive
-enumeration). Each attack is one simulator query on the patched schedule. Scenario sets were fixed
-before any Critic condition ran on frozen data: 84 dev scenarios, 60 frozen (60 worlds per split).
-An earlier 20-world, cheapest-repair-only definition gave 5 frozen scenarios and was superseded.
+Scenario: a world, one of its minimal failures, and one of the 3 cheapest single repairs that fix it
+but introduce at least one regression (hidden answer: the regression set, by exhaustive enumeration).
+Each attack is one simulator query on the patched schedule. Scenario sets: 200 worlds per split
+(214 dev, 213 frozen scenarios), fixed before any Critic condition ran on frozen data. Earlier
+definitions (20 and 60 worlds) gave too few frozen indirect scenarios (5 total, then 7 indirect;
+counts only, no method run) and were superseded.
 
-Development results, no-LLM conditions (`experiments/results/critic_dev_noLLM.json`, 84 scenarios x 10 seeds):
+**Pre-registered DIRECT / INDIRECT split** (`confuzz/scenarios.py`, simulator-derived, no LLM):
+a minimal regression is DIRECT if any violation the simulator reports for it lands on a session,
+room or speaker the repair changed; otherwise INDIRECT (the failure surfaces on untouched entities,
+via consumed or freed slack and playbook choices). A scenario is DIRECT if any minimal regression is.
+Frozen: 192 direct, 21 indirect.
 
-| Critic | Success@1 | @2 | @3 | @5 | @10 | Median queries to counterexample |
-|---|---|---|---|---|---|---|
-| Random | 0.11 | 0.30 | 0.40 | 0.55 | 0.78 | 5 |
-| Size-ordered | 0.08 | 0.22 | 0.35 | 0.53 | 0.73 | 5 |
-| Diff-guided heuristic | 0.26 | 0.48 | 0.61 | 0.69 | 0.77 | 3 |
+Development results, no-LLM conditions (`experiments/results/critic_dev_noLLM.json`, 10 seeds):
 
-The bar for the OpenAI Critic is the diff-guided heuristic, not random. The heuristic plateaus
-because it tests disruptions that look unrelated to the repair last; regressions caused by indirect
-effects (consumed spare capacity, playbook choices that change) are where semantic reasoning could
-add value. That is a hypothesis until `critic_frozen` runs.
+| Class | Critic | Success@1 | @3 | @10 | Median queries |
+|---|---|---|---|---|---|
+| Direct (n=185) | random | 0.12 | 0.43 | 0.84 | 4 |
+| Direct (n=185) | diff_guided | 0.37 | 0.70 | 0.86 | 2 |
+| Indirect (n=29) | random | 0.12 | 0.36 | 0.66 | 6 |
+| Indirect (n=29) | size_ordered | 0.06 | 0.07 | 0.32 | 16 |
+| Indirect (n=29) | diff_guided | 0.00 | 0.01 | 0.28 | 21 |
+
+**Pre-registered hypotheses for the OpenAI Critic (frozen, run once):**
+- H-C1 (primary): on INDIRECT frozen scenarios, OpenAI Critic Success@3 exceeds both random and diff-guided.
+- H-C2: on DIRECT frozen scenarios, OpenAI Critic Success@3 is at least diff-guided's.
+- Analysis: Success@k per class with exact counts; paired comparison per scenario (OpenAI's list is
+  deterministic per scenario, so its unit is the scenario: n = 21 indirect). With n = 21, H-C1 is
+  powered only for large effects; a null result will be reported as such.
+
+## Blue experiment
+
+Scenario: (world, target minimal failure); 20 dev / 20 frozen worlds (63 dev scenarios).
+Metrics, all exact over the 256 modeled perturbations (definitions in `confuzz/blue_eval.py`):
+intervention cost C, residual exposure E (fraction of perturbations that still fail), worst-case
+residual loss W (max severity), counterexample exists, verified, proposals to first verified
+(cap K = 5). Reference frontier: every verified plan of 1-2 actions, Pareto over (C, E).
+Pre-registered scalar: J_λ = C + λ · (residual failing perturbations), primary λ = 0.05,
+sensitivity λ ∈ {0.02, 0.10}; J-regret = J(outcome) - best J among reference plans.
+
+Deterministic cheapest-first baseline on dev (`experiments/results/blue_dev_deterministic.json`):
+verified 54/63 (7 scenarios have no verified plan of ≤2 actions, so
+abstaining is correct there); first proposal has a counterexample 21% of the time;
+median cost 5; mean exposure 0.207; mean worst loss 1.31;
+mean proposals to verified 1.30; J-regret = 0 in 67% of
+scenarios at λ = 0.05 (mean regret 0.43).
+
+**Pre-registered hypothesis for OpenAI Blue:** H-B1: at λ = 0.05, mean J-regret of OpenAI Blue's
+verified outcome is lower than cheapest-first's, with verified rate no lower. Report also the
+head-to-head counts (dominates / dominated / equal / incomparable on (C, E)) and all λ.
+
+## Failure hypergraph
+
+`scripts/export_hypergraph.py` exports minimal failing sets per stage (hidden truth, discovered,
+after each repair) from engine computation; `scripts/build_hypergraph_page.py` renders
+`viz/failure_hypergraph.html`. With `--state runs/state.json` it draws a real TrueForge session.
 
 ## Demo world (hand-designed, every number below is computed)
 

@@ -1,0 +1,4253 @@
+{
+ "config": {
+  "split": "dev",
+  "conditions": "cheapest_first",
+  "tag": "blue_dev_deterministic",
+  "K": 5
+ },
+ "git_commit": "c9c05ab1471de3bf664769505ad60104e2097eda",
+ "summary": {
+  "cheapest_first": {
+   "scenarios": 63,
+   "verified_within_K": 54,
+   "verified_rate": 0.8571,
+   "first_proposal_counterexample_rate": 0.2143,
+   "cost": {
+    "mean": 3.9259,
+    "median": 5.0,
+    "n": 54
+   },
+   "exposure": {
+    "mean": 0.2066,
+    "median": 0.25,
+    "n": 54
+   },
+   "worst_loss": {
+    "mean": 1.3104,
+    "median": 1.0,
+    "n": 54
+   },
+   "frontier_gap": {
+    "mean": 0.0,
+    "median": 0.0,
+    "n": 54
+   },
+   "proposals_to_verified": {
+    "mean": 1.2963,
+    "median": 1.0,
+    "n": 54
+   },
+   "J_regret_mean": {
+    "0.02": {
+     "mean": 0.14,
+     "median": 0.0,
+     "n": 54
+    },
+    "0.05": {
+     "mean": 0.4333,
+     "median": 0.0,
+     "n": 54
+    },
+    "0.1": {
+     "mean": 1.5555,
+     "median": 0.0,
+     "n": 54
+    }
+   },
+   "J_regret_zero_rate": {
+    "0.02": 0.8704,
+    "0.05": 0.6667,
+    "0.1": 0.6111
+   },
+   "on_frontier_rate": 0.9815
+  }
+ },
+ "head_to_head (first=-)": {},
+ "scenarios_with_no_verified_plan_of_1_or_2_actions": 7,
+ "llm": [],
+ "rows": [
+  {
+   "scenario": "gen-50000017:D2+D5",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "move S06 to room D"
+     ],
+     "cost": 1.0,
+     "exposure": 0.4375,
+     "worst_loss": 5.9898,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S03 to room D",
+      "move S06 to room D"
+     ],
+     "cost": 2.0,
+     "exposure": 0.375,
+     "worst_loss": 6.4742,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.25,
+     "worst_loss": 2.5155,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 66,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "move S06 to room D"
+     ],
+     "cost": 1.0,
+     "exposure": 0.4375,
+     "worst_loss": 5.9898,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 3.24,
+     "0.05": 6.6,
+     "0.1": 12.2
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.8
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "move S06 to room D"
+      ],
+      "cost": 1.0,
+      "exposure": 0.4375,
+      "worst_loss": 5.9898,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000017:D2+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.25,
+     "worst_loss": 2.5155,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 40,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.25,
+     "worst_loss": 2.5155,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 6.28,
+     "0.05": 8.2,
+     "0.1": 11.4
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.25,
+      "worst_loss": 2.5155,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000017:D3+D6",
+   "order": 2,
+   "reference_frontier": [],
+   "n_verified_plans": 0,
+   "cheapest_first": {
+    "outcome": null,
+    "proposals_to_verified": null,
+    "J": {
+     "0.02": null,
+     "0.05": null,
+     "0.1": null
+    },
+    "J_regret": {
+     "0.02": null,
+     "0.05": null,
+     "0.1": null
+    },
+    "first_proposal_counterexample": null,
+    "tried": [],
+    "frontier_gap": null,
+    "dominated": null
+   }
+  },
+  {
+   "scenario": "gen-50000017:D5+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "move S03 to room D"
+     ],
+     "cost": 1.0,
+     "exposure": 0.5,
+     "worst_loss": 6.7142,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S03 to room D",
+      "move S06 to room D"
+     ],
+     "cost": 2.0,
+     "exposure": 0.375,
+     "worst_loss": 6.4742,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.25,
+     "worst_loss": 2.5155,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 57,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "move S03 to room D"
+     ],
+     "cost": 1.0,
+     "exposure": 0.5,
+     "worst_loss": 6.7142,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 3.56,
+     "0.05": 7.4,
+     "0.1": 13.8
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.6,
+     "0.1": 2.4
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "move S03 to room D"
+      ],
+      "cost": 1.0,
+      "exposure": 0.5,
+      "worst_loss": 6.7142,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000035:D2+D5",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "move S10 to room B"
+     ],
+     "cost": 1.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 229,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "move S10 to room B"
+     ],
+     "cost": 1.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 1.0,
+     "0.05": 1.0,
+     "0.1": 1.0
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "move S10 to room B"
+      ],
+      "cost": 1.0,
+      "exposure": 0.0,
+      "worst_loss": 0.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000035:D2+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "move S10 to room B"
+     ],
+     "cost": 1.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 137,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "move S10 to room B"
+     ],
+     "cost": 1.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 1.0,
+     "0.05": 1.0,
+     "0.1": 1.0
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "move S10 to room B"
+      ],
+      "cost": 1.0,
+      "exposure": 0.0,
+      "worst_loss": 0.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000088:D2+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "move S04 to room D",
+      "move S09 to room D"
+     ],
+     "cost": 2.0,
+     "exposure": 0.4062,
+     "worst_loss": 1.3866,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.25,
+     "worst_loss": 1.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 76,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.25,
+     "worst_loss": 1.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 6.28,
+     "0.05": 8.2,
+     "0.1": 11.4
+    },
+    "J_regret": {
+     "0.02": 2.2003,
+     "0.05": 1.0006,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.25,
+      "worst_loss": 1.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000088:D3+D6",
+   "order": 2,
+   "reference_frontier": [],
+   "n_verified_plans": 0,
+   "cheapest_first": {
+    "outcome": null,
+    "proposals_to_verified": null,
+    "J": {
+     "0.02": null,
+     "0.05": null,
+     "0.1": null
+    },
+    "J_regret": {
+     "0.02": null,
+     "0.05": null,
+     "0.1": null
+    },
+    "first_proposal_counterexample": null,
+    "tried": [],
+    "frontier_gap": null,
+    "dominated": null
+   }
+  },
+  {
+   "scenario": "gen-50000088:D5+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "move S04 to room D",
+      "move S09 to room D"
+     ],
+     "cost": 2.0,
+     "exposure": 0.4062,
+     "worst_loss": 1.3866,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.25,
+     "worst_loss": 1.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 80,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.25,
+     "worst_loss": 1.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 6.28,
+     "0.05": 8.2,
+     "0.1": 11.4
+    },
+    "J_regret": {
+     "0.02": 2.2003,
+     "0.05": 1.0006,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.25,
+      "worst_loss": 1.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000137:D1+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.125,
+     "worst_loss": 0.125,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S06 to room B",
+      "activate standby room F"
+     ],
+     "cost": 6.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 68,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.125,
+     "worst_loss": 0.125,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 5.64,
+     "0.05": 6.6,
+     "0.1": 8.2
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.6,
+     "0.1": 2.2
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.125,
+      "worst_loss": 0.125,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000137:D2+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.125,
+     "worst_loss": 0.125,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S06 to room B",
+      "activate standby room F"
+     ],
+     "cost": 6.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 65,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.125,
+     "worst_loss": 0.125,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 5.64,
+     "0.05": 6.6,
+     "0.1": 8.2
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.6,
+     "0.1": 2.2
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.125,
+      "worst_loss": 0.125,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000137:D3+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "move S06 to room E"
+     ],
+     "cost": 1.0,
+     "exposure": 0.4609,
+     "worst_loss": 1.9695,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.125,
+     "worst_loss": 0.125,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S06 to room B",
+      "activate standby room F"
+     ],
+     "cost": 6.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 148,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "move S06 to room E"
+     ],
+     "cost": 1.0,
+     "exposure": 0.4609,
+     "worst_loss": 1.9695,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 2,
+    "J": {
+     "0.02": 3.3598,
+     "0.05": 6.8995,
+     "0.1": 12.799
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.8995,
+     "0.1": 6.799
+    },
+    "first_proposal_counterexample": true,
+    "tried": [
+     {
+      "plan": [
+       "move S06 to room B"
+      ],
+      "cost": 1.0,
+      "exposure": 0.4688,
+      "worst_loss": 1.449,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "move S06 to room E"
+      ],
+      "cost": 1.0,
+      "exposure": 0.4609,
+      "worst_loss": 1.9695,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000137:D4+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "move S06 to room E"
+     ],
+     "cost": 1.0,
+     "exposure": 0.4609,
+     "worst_loss": 1.9695,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S06 to room B",
+      "activate standby room F"
+     ],
+     "cost": 6.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 123,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "move S06 to room E"
+     ],
+     "cost": 1.0,
+     "exposure": 0.4609,
+     "worst_loss": 1.9695,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 2,
+    "J": {
+     "0.02": 3.3598,
+     "0.05": 6.8995,
+     "0.1": 12.799
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.8995,
+     "0.1": 6.799
+    },
+    "first_proposal_counterexample": true,
+    "tried": [
+     {
+      "plan": [
+       "move S06 to room B"
+      ],
+      "cost": 1.0,
+      "exposure": 0.4688,
+      "worst_loss": 1.449,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "move S06 to room E"
+      ],
+      "cost": 1.0,
+      "exposure": 0.4609,
+      "worst_loss": 1.9695,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000137:D5+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.125,
+     "worst_loss": 0.125,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S06 to room B",
+      "activate standby room F"
+     ],
+     "cost": 6.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 69,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.125,
+     "worst_loss": 0.125,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 5.64,
+     "0.05": 6.6,
+     "0.1": 8.2
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.6,
+     "0.1": 2.2
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.125,
+      "worst_loss": 0.125,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000157:D1+D2+D6",
+   "order": 3,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.375,
+     "worst_loss": 2.1,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S09 to room A",
+      "activate standby room F"
+     ],
+     "cost": 6.0,
+     "exposure": 0.3125,
+     "worst_loss": 1.1829,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "shift S04 to slot 0, room B",
+      "activate standby room F"
+     ],
+     "cost": 8.0,
+     "exposure": 0.2812,
+     "worst_loss": 3.6,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 67,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.375,
+     "worst_loss": 2.1,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 6.92,
+     "0.05": 9.8,
+     "0.1": 14.6
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.6
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.375,
+      "worst_loss": 2.1,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000157:D2+D3",
+   "order": 2,
+   "reference_frontier": [],
+   "n_verified_plans": 0,
+   "cheapest_first": {
+    "outcome": null,
+    "proposals_to_verified": null,
+    "J": {
+     "0.02": null,
+     "0.05": null,
+     "0.1": null
+    },
+    "J_regret": {
+     "0.02": null,
+     "0.05": null,
+     "0.1": null
+    },
+    "first_proposal_counterexample": null,
+    "tried": [],
+    "frontier_gap": null,
+    "dominated": null
+   }
+  },
+  {
+   "scenario": "gen-50000157:D2+D4",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "move S09 to room C"
+     ],
+     "cost": 1.0,
+     "exposure": 0.3906,
+     "worst_loss": 1.7876,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S09 to room A",
+      "activate standby room F"
+     ],
+     "cost": 6.0,
+     "exposure": 0.3125,
+     "worst_loss": 1.1829,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "shift S04 to slot 0, room B",
+      "activate standby room F"
+     ],
+     "cost": 8.0,
+     "exposure": 0.2812,
+     "worst_loss": 3.6,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 28,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "move S09 to room C"
+     ],
+     "cost": 1.0,
+     "exposure": 0.3906,
+     "worst_loss": 1.7876,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 3,
+    "J": {
+     "0.02": 2.9999,
+     "0.05": 5.9997,
+     "0.1": 10.9994
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": true,
+    "tried": [
+     {
+      "plan": [
+       "move S04 to room A"
+      ],
+      "cost": 1.0,
+      "exposure": 0.5547,
+      "worst_loss": 3.3142,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "move S09 to room A"
+      ],
+      "cost": 1.0,
+      "exposure": 0.4219,
+      "worst_loss": 1.7876,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "move S09 to room C"
+      ],
+      "cost": 1.0,
+      "exposure": 0.3906,
+      "worst_loss": 1.7876,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000157:D2+D5+D6",
+   "order": 3,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.375,
+     "worst_loss": 2.1,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S09 to room A",
+      "activate standby room F"
+     ],
+     "cost": 6.0,
+     "exposure": 0.3125,
+     "worst_loss": 1.1829,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "shift S04 to slot 0, room B",
+      "activate standby room F"
+     ],
+     "cost": 8.0,
+     "exposure": 0.2812,
+     "worst_loss": 3.6,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 61,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.375,
+     "worst_loss": 2.1,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 6.92,
+     "0.05": 9.8,
+     "0.1": 14.6
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.6
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.375,
+      "worst_loss": 2.1,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000157:D2+D6+D7",
+   "order": 3,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.375,
+     "worst_loss": 2.1,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S09 to room A",
+      "activate standby room F"
+     ],
+     "cost": 6.0,
+     "exposure": 0.3125,
+     "worst_loss": 1.1829,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "shift S04 to slot 0, room B",
+      "activate standby room F"
+     ],
+     "cost": 8.0,
+     "exposure": 0.2812,
+     "worst_loss": 3.6,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 66,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.375,
+     "worst_loss": 2.1,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 6.92,
+     "0.05": 9.8,
+     "0.1": 14.6
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.6
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.375,
+      "worst_loss": 2.1,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000179:D1+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 107,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 5.0,
+     "0.05": 5.0,
+     "0.1": 5.0
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.0,
+      "worst_loss": 0.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000179:D2+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 97,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 5.0,
+     "0.05": 5.0,
+     "0.1": 5.0
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.0,
+      "worst_loss": 0.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000200:D1+D2",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 66,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 5.0,
+     "0.05": 5.0,
+     "0.1": 5.0
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.0,
+      "worst_loss": 0.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000200:D2+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 58,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 5.0,
+     "0.05": 5.0,
+     "0.1": 5.0
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.0,
+      "worst_loss": 0.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000200:D2+D8",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 66,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 5.0,
+     "0.05": 5.0,
+     "0.1": 5.0
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.0,
+      "worst_loss": 0.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000226:D2+D3",
+   "order": 2,
+   "reference_frontier": [],
+   "n_verified_plans": 0,
+   "cheapest_first": {
+    "outcome": null,
+    "proposals_to_verified": null,
+    "J": {
+     "0.02": null,
+     "0.05": null,
+     "0.1": null
+    },
+    "J_regret": {
+     "0.02": null,
+     "0.05": null,
+     "0.1": null
+    },
+    "first_proposal_counterexample": null,
+    "tried": [],
+    "frontier_gap": null,
+    "dominated": null
+   }
+  },
+  {
+   "scenario": "gen-50000226:D2+D5",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.25,
+     "worst_loss": 1.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 50,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.25,
+     "worst_loss": 1.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 6.28,
+     "0.05": 8.2,
+     "0.1": 11.4
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.25,
+      "worst_loss": 1.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000226:D2+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.25,
+     "worst_loss": 1.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 50,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.25,
+     "worst_loss": 1.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 6.28,
+     "0.05": 8.2,
+     "0.1": 11.4
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.25,
+      "worst_loss": 1.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000250:D2+D5",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.2812,
+     "worst_loss": 2.6,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S06 to room D",
+      "activate standby room F"
+     ],
+     "cost": 6.0,
+     "exposure": 0.25,
+     "worst_loss": 2.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 74,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.2812,
+     "worst_loss": 2.6,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 6.4397,
+     "0.05": 8.5994,
+     "0.1": 12.1987
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.2812,
+      "worst_loss": 2.6,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000250:D2+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "move S06 to room E",
+      "move S07 to room A"
+     ],
+     "cost": 2.0,
+     "exposure": 0.6094,
+     "worst_loss": 3.3094,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.2812,
+     "worst_loss": 2.6,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S06 to room D",
+      "activate standby room F"
+     ],
+     "cost": 6.0,
+     "exposure": 0.25,
+     "worst_loss": 2.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 76,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.2812,
+     "worst_loss": 2.6,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 6.4397,
+     "0.05": 8.5994,
+     "0.1": 12.1987
+    },
+    "J_regret": {
+     "0.02": 1.3196,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.2812,
+      "worst_loss": 2.6,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000250:D2+D8",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.2812,
+     "worst_loss": 2.6,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S06 to room D",
+      "activate standby room F"
+     ],
+     "cost": 6.0,
+     "exposure": 0.25,
+     "worst_loss": 2.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 76,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.2812,
+     "worst_loss": 2.6,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 3,
+    "J": {
+     "0.02": 6.4397,
+     "0.05": 8.5994,
+     "0.1": 12.1987
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": true,
+    "tried": [
+     {
+      "plan": [
+       "move S02 to room D"
+      ],
+      "cost": 1.0,
+      "exposure": 0.8594,
+      "worst_loss": 3.5213,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "swap rooms of S01 and S02"
+      ],
+      "cost": 2.0,
+      "exposure": 0.625,
+      "worst_loss": 3.5213,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.2812,
+      "worst_loss": 2.6,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000250:D3+D6",
+   "order": 2,
+   "reference_frontier": [],
+   "n_verified_plans": 0,
+   "cheapest_first": {
+    "outcome": null,
+    "proposals_to_verified": null,
+    "J": {
+     "0.02": null,
+     "0.05": null,
+     "0.1": null
+    },
+    "J_regret": {
+     "0.02": null,
+     "0.05": null,
+     "0.1": null
+    },
+    "first_proposal_counterexample": null,
+    "tried": [],
+    "frontier_gap": null,
+    "dominated": null
+   }
+  },
+  {
+   "scenario": "gen-50000250:D6+D7",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "move S06 to room D",
+      "move S05 to room C"
+     ],
+     "cost": 2.0,
+     "exposure": 0.5625,
+     "worst_loss": 3.0742,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.2812,
+     "worst_loss": 2.6,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S06 to room D",
+      "activate standby room F"
+     ],
+     "cost": 6.0,
+     "exposure": 0.25,
+     "worst_loss": 2.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 97,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "shift S04 to slot 3, room B"
+     ],
+     "cost": 3.0,
+     "exposure": 0.5625,
+     "worst_loss": 3.3486,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 3,
+    "J": {
+     "0.02": 5.88,
+     "0.05": 10.2,
+     "0.1": 17.4
+    },
+    "J_regret": {
+     "0.02": 1.0,
+     "0.05": 1.6006,
+     "0.1": 5.2013
+    },
+    "first_proposal_counterexample": true,
+    "tried": [
+     {
+      "plan": [
+       "move S05 to room D"
+      ],
+      "cost": 1.0,
+      "exposure": 0.75,
+      "worst_loss": 3.6742,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "shift S04 to slot 3, room A"
+      ],
+      "cost": 3.0,
+      "exposure": 0.6875,
+      "worst_loss": 3.3486,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "shift S04 to slot 3, room B"
+      ],
+      "cost": 3.0,
+      "exposure": 0.5625,
+      "worst_loss": 3.3486,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": true
+   }
+  },
+  {
+   "scenario": "gen-50000328:D1+D2",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 89,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 5.0,
+     "0.05": 5.0,
+     "0.1": 5.0
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.0,
+      "worst_loss": 0.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000328:D2+D3",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 89,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 5.0,
+     "0.05": 5.0,
+     "0.1": 5.0
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.0,
+      "worst_loss": 0.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000328:D2+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "move S09 to room E"
+     ],
+     "cost": 1.0,
+     "exposure": 0.375,
+     "worst_loss": 4.2,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 103,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "move S09 to room E"
+     ],
+     "cost": 1.0,
+     "exposure": 0.375,
+     "worst_loss": 4.2,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 2,
+    "J": {
+     "0.02": 2.92,
+     "0.05": 5.8,
+     "0.1": 10.6
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.8,
+     "0.1": 5.6
+    },
+    "first_proposal_counterexample": true,
+    "tried": [
+     {
+      "plan": [
+       "move S09 to room A"
+      ],
+      "cost": 1.0,
+      "exposure": 0.5,
+      "worst_loss": 4.2,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "move S09 to room E"
+      ],
+      "cost": 1.0,
+      "exposure": 0.375,
+      "worst_loss": 4.2,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000361:D1+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 80,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 5.0,
+     "0.05": 5.0,
+     "0.1": 5.0
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.0,
+      "worst_loss": 0.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000361:D2+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 77,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 5.0,
+     "0.05": 5.0,
+     "0.1": 5.0
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.0,
+      "worst_loss": 0.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000375:D2+D3",
+   "order": 2,
+   "reference_frontier": [],
+   "n_verified_plans": 0,
+   "cheapest_first": {
+    "outcome": null,
+    "proposals_to_verified": null,
+    "J": {
+     "0.02": null,
+     "0.05": null,
+     "0.1": null
+    },
+    "J_regret": {
+     "0.02": null,
+     "0.05": null,
+     "0.1": null
+    },
+    "first_proposal_counterexample": null,
+    "tried": [],
+    "frontier_gap": null,
+    "dominated": null
+   }
+  },
+  {
+   "scenario": "gen-50000375:D2+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.375,
+     "worst_loss": 1.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S08 to room B",
+      "activate standby room F"
+     ],
+     "cost": 6.0,
+     "exposure": 0.25,
+     "worst_loss": 1.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 78,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.375,
+     "worst_loss": 1.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 6.92,
+     "0.05": 9.8,
+     "0.1": 14.6
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.6,
+     "0.1": 2.2
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.375,
+      "worst_loss": 1.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000375:D2+D7",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "shift S01 to slot 2, room A"
+     ],
+     "cost": 3.0,
+     "exposure": 0.5312,
+     "worst_loss": 3.116,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.375,
+     "worst_loss": 1.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S08 to room B",
+      "activate standby room F"
+     ],
+     "cost": 6.0,
+     "exposure": 0.25,
+     "worst_loss": 1.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 96,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "shift S01 to slot 2, room A"
+     ],
+     "cost": 3.0,
+     "exposure": 0.5312,
+     "worst_loss": 3.116,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 5.7197,
+     "0.05": 9.7994,
+     "0.1": 16.5987
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.5994,
+     "0.1": 4.1987
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "shift S01 to slot 2, room A"
+      ],
+      "cost": 3.0,
+      "exposure": 0.5312,
+      "worst_loss": 3.116,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000375:D4+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "move S04 to room B",
+      "move S07 to room B"
+     ],
+     "cost": 2.0,
+     "exposure": 0.4375,
+     "worst_loss": 2.716,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S08 to room B",
+      "activate standby room F"
+     ],
+     "cost": 6.0,
+     "exposure": 0.25,
+     "worst_loss": 1.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 39,
+   "cheapest_first": {
+    "outcome": null,
+    "proposals_to_verified": null,
+    "J": {
+     "0.02": null,
+     "0.05": null,
+     "0.1": null
+    },
+    "J_regret": {
+     "0.02": null,
+     "0.05": null,
+     "0.1": null
+    },
+    "first_proposal_counterexample": true,
+    "tried": [
+     {
+      "plan": [
+       "move S04 to room B"
+      ],
+      "cost": 1.0,
+      "exposure": 0.5625,
+      "worst_loss": 2.716,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "move S07 to room A"
+      ],
+      "cost": 1.0,
+      "exposure": 0.7188,
+      "worst_loss": 2.716,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "move S08 to room B"
+      ],
+      "cost": 1.0,
+      "exposure": 0.5625,
+      "worst_loss": 2.756,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "move S09 to room B"
+      ],
+      "cost": 1.0,
+      "exposure": 0.5625,
+      "worst_loss": 2.716,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "shift S01 to slot 2, room B"
+      ],
+      "cost": 3.0,
+      "exposure": 0.7188,
+      "worst_loss": 3.116,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     }
+    ],
+    "frontier_gap": null,
+    "dominated": null
+   }
+  },
+  {
+   "scenario": "gen-50000400:D2+D3",
+   "order": 2,
+   "reference_frontier": [],
+   "n_verified_plans": 0,
+   "cheapest_first": {
+    "outcome": null,
+    "proposals_to_verified": null,
+    "J": {
+     "0.02": null,
+     "0.05": null,
+     "0.1": null
+    },
+    "J_regret": {
+     "0.02": null,
+     "0.05": null,
+     "0.1": null
+    },
+    "first_proposal_counterexample": null,
+    "tried": [],
+    "frontier_gap": null,
+    "dominated": null
+   }
+  },
+  {
+   "scenario": "gen-50000400:D2+D4",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "shift S05 to slot 0, room A",
+      "swap rooms of S03 and S05"
+     ],
+     "cost": 5.0,
+     "exposure": 0.4062,
+     "worst_loss": 2.458,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 2,
+   "cheapest_first": {
+    "outcome": null,
+    "proposals_to_verified": null,
+    "J": {
+     "0.02": null,
+     "0.05": null,
+     "0.1": null
+    },
+    "J_regret": {
+     "0.02": null,
+     "0.05": null,
+     "0.1": null
+    },
+    "first_proposal_counterexample": true,
+    "tried": [
+     {
+      "plan": [
+       "move S05 to room A"
+      ],
+      "cost": 1.0,
+      "exposure": 0.6875,
+      "worst_loss": 3.778,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "move S07 to room C"
+      ],
+      "cost": 1.0,
+      "exposure": 0.5625,
+      "worst_loss": 3.8657,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "swap rooms of S04 and S05"
+      ],
+      "cost": 2.0,
+      "exposure": 0.8125,
+      "worst_loss": 3.778,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "swap rooms of S07 and S08"
+      ],
+      "cost": 2.0,
+      "exposure": 0.625,
+      "worst_loss": 4.0057,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "shift S04 to slot 0, room A"
+      ],
+      "cost": 3.0,
+      "exposure": 0.625,
+      "worst_loss": 3.4457,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     }
+    ],
+    "frontier_gap": null,
+    "dominated": null
+   }
+  },
+  {
+   "scenario": "gen-50000400:D2+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.375,
+     "worst_loss": 3.1,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 41,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.375,
+     "worst_loss": 3.1,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 6.92,
+     "0.05": 9.8,
+     "0.1": 14.6
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.375,
+      "worst_loss": 3.1,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000482:D2+D3",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "shift S06 to slot 3, room D"
+     ],
+     "cost": 3.0,
+     "exposure": 0.3438,
+     "worst_loss": 3.2162,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "shift S06 to slot 3, room D",
+      "activate standby room F"
+     ],
+     "cost": 8.0,
+     "exposure": 0.1875,
+     "worst_loss": 0.7662,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 12,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "shift S06 to slot 3, room D"
+     ],
+     "cost": 3.0,
+     "exposure": 0.3438,
+     "worst_loss": 3.2162,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 4,
+    "J": {
+     "0.02": 4.7603,
+     "0.05": 7.4006,
+     "0.1": 11.8013
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": true,
+    "tried": [
+     {
+      "plan": [
+       "shift S04 to slot 3, room B"
+      ],
+      "cost": 3.0,
+      "exposure": 0.5625,
+      "worst_loss": 3.2162,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "shift S04 to slot 3, room D"
+      ],
+      "cost": 3.0,
+      "exposure": 0.8125,
+      "worst_loss": 3.2162,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "shift S06 to slot 3, room B"
+      ],
+      "cost": 3.0,
+      "exposure": 0.4688,
+      "worst_loss": 3.8162,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "shift S06 to slot 3, room D"
+      ],
+      "cost": 3.0,
+      "exposure": 0.3438,
+      "worst_loss": 3.2162,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000482:D2+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.25,
+     "worst_loss": 1.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "shift S06 to slot 3, room D",
+      "activate standby room F"
+     ],
+     "cost": 8.0,
+     "exposure": 0.1875,
+     "worst_loss": 0.7662,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 70,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.25,
+     "worst_loss": 1.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 6.28,
+     "0.05": 8.2,
+     "0.1": 11.4
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.25,
+      "worst_loss": 1.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000503:D2+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 75,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 5.0,
+     "0.05": 5.0,
+     "0.1": 5.0
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.0,
+      "worst_loss": 0.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000503:D5+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 86,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 5.0,
+     "0.05": 5.0,
+     "0.1": 5.0
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.0,
+      "worst_loss": 0.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000527:D1+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.25,
+     "worst_loss": 0.0333,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S05 to room D",
+      "activate standby room F"
+     ],
+     "cost": 6.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 74,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.25,
+     "worst_loss": 0.0333,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 6.28,
+     "0.05": 8.2,
+     "0.1": 11.4
+    },
+    "J_regret": {
+     "0.02": 0.28,
+     "0.05": 2.2,
+     "0.1": 5.4
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.25,
+      "worst_loss": 0.0333,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000527:D2+D4",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "move S05 to room D"
+     ],
+     "cost": 1.0,
+     "exposure": 0.5,
+     "worst_loss": 2.18,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S05 to room D",
+      "activate standby room F"
+     ],
+     "cost": 6.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 182,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "move S05 to room D"
+     ],
+     "cost": 1.0,
+     "exposure": 0.5,
+     "worst_loss": 2.18,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 2,
+    "J": {
+     "0.02": 3.56,
+     "0.05": 7.4,
+     "0.1": 13.8
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 1.4,
+     "0.1": 7.8
+    },
+    "first_proposal_counterexample": true,
+    "tried": [
+     {
+      "plan": [
+       "move S04 to room A"
+      ],
+      "cost": 1.0,
+      "exposure": 0.6875,
+      "worst_loss": 2.099,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "move S05 to room D"
+      ],
+      "cost": 1.0,
+      "exposure": 0.5,
+      "worst_loss": 2.18,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000527:D2+D5",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.25,
+     "worst_loss": 0.0333,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S05 to room D",
+      "activate standby room F"
+     ],
+     "cost": 6.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 74,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.25,
+     "worst_loss": 0.0333,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 6.28,
+     "0.05": 8.2,
+     "0.1": 11.4
+    },
+    "J_regret": {
+     "0.02": 0.28,
+     "0.05": 2.2,
+     "0.1": 5.4
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.25,
+      "worst_loss": 0.0333,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000527:D2+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.25,
+     "worst_loss": 0.0333,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "move S05 to room D",
+      "activate standby room F"
+     ],
+     "cost": 6.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 68,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.25,
+     "worst_loss": 0.0333,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 6.28,
+     "0.05": 8.2,
+     "0.1": 11.4
+    },
+    "J_regret": {
+     "0.02": 0.28,
+     "0.05": 2.2,
+     "0.1": 5.4
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.25,
+      "worst_loss": 0.0333,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000582:D1+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0625,
+     "worst_loss": 1.4,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "shift S01 to slot 1, room A",
+      "activate standby room F"
+     ],
+     "cost": 8.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 72,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0625,
+     "worst_loss": 1.4,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 5.32,
+     "0.05": 5.8,
+     "0.1": 6.6
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.0625,
+      "worst_loss": 1.4,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000582:D2+D3",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "shift S01 to slot 1, room A"
+     ],
+     "cost": 3.0,
+     "exposure": 0.4375,
+     "worst_loss": 3.1516,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0625,
+     "worst_loss": 1.4,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "shift S01 to slot 1, room A",
+      "activate standby room F"
+     ],
+     "cost": 8.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 114,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "shift S01 to slot 1, room A"
+     ],
+     "cost": 3.0,
+     "exposure": 0.4375,
+     "worst_loss": 3.1516,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 2,
+    "J": {
+     "0.02": 5.24,
+     "0.05": 8.6,
+     "0.1": 14.2
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 2.8,
+     "0.1": 7.6
+    },
+    "first_proposal_counterexample": true,
+    "tried": [
+     {
+      "plan": [
+       "move S02 to room B"
+      ],
+      "cost": 1.0,
+      "exposure": 0.6875,
+      "worst_loss": 3.5516,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "shift S01 to slot 1, room A"
+      ],
+      "cost": 3.0,
+      "exposure": 0.4375,
+      "worst_loss": 3.1516,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000582:D2+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0625,
+     "worst_loss": 1.4,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "shift S01 to slot 1, room A",
+      "activate standby room F"
+     ],
+     "cost": 8.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 72,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0625,
+     "worst_loss": 1.4,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 5.32,
+     "0.05": 5.8,
+     "0.1": 6.6
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.0625,
+      "worst_loss": 1.4,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000582:D6+D8",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0625,
+     "worst_loss": 1.4,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "shift S01 to slot 1, room A",
+      "activate standby room F"
+     ],
+     "cost": 8.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 72,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0625,
+     "worst_loss": 1.4,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 5.32,
+     "0.05": 5.8,
+     "0.1": 6.6
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.0625,
+      "worst_loss": 1.4,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000635:D2+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "move S04 to room C"
+     ],
+     "cost": 1.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 135,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "move S04 to room C"
+     ],
+     "cost": 1.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 1.0,
+     "0.05": 1.0,
+     "0.1": 1.0
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "move S04 to room C"
+      ],
+      "cost": 1.0,
+      "exposure": 0.0,
+      "worst_loss": 0.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000635:D2+D7",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "move S04 to room C"
+     ],
+     "cost": 1.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 233,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "move S04 to room C"
+     ],
+     "cost": 1.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 1.0,
+     "0.05": 1.0,
+     "0.1": 1.0
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "move S04 to room C"
+      ],
+      "cost": 1.0,
+      "exposure": 0.0,
+      "worst_loss": 0.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000638:D2+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 53,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 5.0,
+     "0.05": 5.0,
+     "0.1": 5.0
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.0,
+      "worst_loss": 0.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000638:D3+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "shift S03 to slot 1, room C"
+     ],
+     "cost": 3.0,
+     "exposure": 0.375,
+     "worst_loss": 2.26,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 63,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "shift S03 to slot 1, room C"
+     ],
+     "cost": 3.0,
+     "exposure": 0.375,
+     "worst_loss": 2.26,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 3,
+    "J": {
+     "0.02": 4.92,
+     "0.05": 7.8,
+     "0.1": 12.6
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 2.8,
+     "0.1": 7.6
+    },
+    "first_proposal_counterexample": true,
+    "tried": [
+     {
+      "plan": [
+       "shift S02 to slot 1, room A"
+      ],
+      "cost": 3.0,
+      "exposure": 0.5,
+      "worst_loss": 2.26,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "shift S03 to slot 1, room A"
+      ],
+      "cost": 3.0,
+      "exposure": 0.5,
+      "worst_loss": 2.26,
+      "counterexample_exists": true,
+      "target_fixed": true,
+      "verified": false
+     },
+     {
+      "plan": [
+       "shift S03 to slot 1, room C"
+      ],
+      "cost": 3.0,
+      "exposure": 0.375,
+      "worst_loss": 2.26,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000638:D5+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 58,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 5.0,
+     "0.05": 5.0,
+     "0.1": 5.0
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.0,
+      "worst_loss": 0.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000640:D2+D5",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "move S11 to room C"
+     ],
+     "cost": 1.0,
+     "exposure": 0.25,
+     "worst_loss": 0.47,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 127,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "move S11 to room C"
+     ],
+     "cost": 1.0,
+     "exposure": 0.25,
+     "worst_loss": 0.47,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 2.28,
+     "0.05": 4.2,
+     "0.1": 7.4
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 2.4
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "move S11 to room C"
+      ],
+      "cost": 1.0,
+      "exposure": 0.25,
+      "worst_loss": 0.47,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  },
+  {
+   "scenario": "gen-50000640:D2+D6",
+   "order": 2,
+   "reference_frontier": [
+    {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    }
+   ],
+   "n_verified_plans": 45,
+   "cheapest_first": {
+    "outcome": {
+     "plan": [
+      "activate standby room F"
+     ],
+     "cost": 5.0,
+     "exposure": 0.0,
+     "worst_loss": 0.0,
+     "counterexample_exists": false,
+     "target_fixed": true,
+     "verified": true
+    },
+    "proposals_to_verified": 1,
+    "J": {
+     "0.02": 5.0,
+     "0.05": 5.0,
+     "0.1": 5.0
+    },
+    "J_regret": {
+     "0.02": 0.0,
+     "0.05": 0.0,
+     "0.1": 0.0
+    },
+    "first_proposal_counterexample": false,
+    "tried": [
+     {
+      "plan": [
+       "activate standby room F"
+      ],
+      "cost": 5.0,
+      "exposure": 0.0,
+      "worst_loss": 0.0,
+      "counterexample_exists": false,
+      "target_fixed": true,
+      "verified": true
+     }
+    ],
+    "frontier_gap": 0.0,
+    "dominated": false
+   }
+  }
+ ],
+ "wall_clock_s": 194.0
+}

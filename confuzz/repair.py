@@ -190,3 +190,48 @@ def verify_exact(original: World, patched: World, targets: list[frozenset[str]])
         "failing_perturbations_after": sum(after.values()),
         "scope": "exhaustive over the modeled perturbation space only",
     }
+
+
+def instantiate_plan(world: World, targets: list[frozenset[str]], steps: list[dict], max_combos: int = 20000) -> Instantiation:
+    """Cheapest concrete plan matching a multi-step strategy. Every concrete choice for earlier steps
+    is tried (bounded by max_combos); the last step must make every target pass and keep the base
+    passing. Returns the plan's actions via .action (single step) or .plan (all steps)."""
+    best: tuple[float, str, list[Action]] | None = None
+    checks, considered = 0, 0
+
+    def rec(w: World, i: int, acc: list[Action], cost: float):
+        nonlocal best, checks, considered
+        if considered >= max_combos:
+            return
+        cands = concrete_actions(w, steps[i])
+        for a in cands:
+            considered += 1
+            c = cost + action_cost(w, a)
+            if best is not None and c > best[0]:
+                continue
+            w2 = apply_action(w, a)
+            if i < len(steps) - 1:
+                rec(w2, i + 1, acc + [a], c)
+                continue
+            checks += 1
+            if simulate(w2, frozenset()).critical:
+                continue
+            ok = True
+            for t in targets:
+                checks += 1
+                if simulate(w2, t).critical:
+                    ok = False
+                    break
+            if ok:
+                key = (c, str([x.to_dict() for x in acc + [a]]))
+                if best is None or key < best[:2]:
+                    best = (c, key[1], acc + [a])
+
+    rec(world, 0, [], 0.0)
+    if best is None:
+        inst = Instantiation(None, 0.0, checks, considered, "no concrete plan of this strategy fixes the target failure(s)")
+        inst.plan = []
+        return inst
+    inst = Instantiation(best[2][-1], best[0], checks, considered, f"cheapest of {considered} concrete combinations that fixes the target")
+    inst.plan = best[2]
+    return inst
