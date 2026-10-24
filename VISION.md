@@ -7,11 +7,12 @@ warehouses, reroute shipments, roll out config changes. The dangerous failures a
 They are second-order: a fix that solves today's incident and silently removes the slack another part
 of the system was relying on.
 
-We saw it in both systems we built. In the conference, the cheapest fix for a keynote incident made four
-disruptions that used to be harmless break the schedule on their own. In the inventory network, moving
-200 units of infant formula to the City Hub fixed a stockout, and left the Hub with no floor space for
-the insulin the playbook evacuates there when a different warehouse loses power. Neither failure is
-visible from the fix itself. A human approving a plausible plan would have approved both.
+We saw the same verification problem across both systems we built. In the conference, a cheap repair
+can solve the immediate scheduling problem while removing slack elsewhere, so CONFUZZ-R attacks the
+repair before it can reach a human. In the inventory network, RED found a genuine three-way infant
+formula stockout; BLUE repaired it with a 100-unit transfer from North DC to City Hub, and exhaustive
+verification found zero new regressions across the modeled 256-event space. The sandbox then surfaced
+the dominant residual risk: carrier-strike scenarios remained far more fragile than the rest of the space.
 
 ## Why now
 
@@ -81,8 +82,8 @@ failures that remain; a sampled failure bound under demand uncertainty; the agen
 | System | 12 sessions, 6 rooms, 4 slots, 2 zones | 3 sites, 4 SKUs (cold-chain insulin, formula), 7-day horizon |
 | Disruptions | room loss, demand surge, route closure, AV failure, speaker delay | supplier delay, DC power outage, recall, dock closure, carrier strike, heatwave |
 | Minimal failures (exhaustive) | 2 pairwise, 3 third-order | 3 pairwise, 1 third-order |
-| Cheap fix that the Critic kills | swap two sessions: 4 disruptions now fail alone | transfer 200 formula: South DC outage alone now overflows City Hub storage |
-| Verified fix | standby ballroom + move keynote (0 regressions) | dual-source formula (0 regressions) |
+| Repair / Critic result | cheap room swap can create new scheduling regressions | 100-unit formula transfer survives Critic attacks and introduces 0 modeled regressions |
+| Verified result | standby-room repair verified within the modeled space | transfer 100 FOR North DC -> City Hub; exact failures 128 -> 96, 0 regressions |
 
 Same MCP server, same agents, same TrueForge approval gate, same live console. Switching domains is
 `reset_session(world_id="inventory")`.

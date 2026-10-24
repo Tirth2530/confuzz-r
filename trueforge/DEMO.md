@@ -28,8 +28,9 @@ too (messages can't be unsent). Allow, and the attendee board (http://127.0.0.1:
 shows "Keynote moved to Ballroom F, North wing, step-free access. Reason: water leak." No more missed shouted announcements.
 
 **4:25 Bigger than conferences (35 s).** "Same engine, same agents, same gate, a different business": switch to the
-inventory network (recorded real run): moving 200 units of formula fixes a store, and the Critic shows a power outage
-at another warehouse then overflows the store's storage. "Before an AI changes a real system, it has to prove the
-change won't create a worse problem somewhere else."
+inventory network (recorded real run). RED found a genuine three-way formula stockout. BLUE proposed a 100-unit
+North-DC-to-City-Hub transfer; CRITIC attacked it, exhaustive verification found 0 new regressions across 256 modeled
+combinations, and the sandbox surfaced carrier strike as the dominant residual-risk driver. "Before an AI changes a
+real system, it has to prove the change won't create a worse problem somewhere else."
 
 If live fails: switch to the recording and keep the same beats.
