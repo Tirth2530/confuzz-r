@@ -1,7 +1,13 @@
 """CONFUZZ-R MCP server (stdio). TrueForge agents reach the deterministic engine only through these tools.
 
-Run:  python -m confuzz.mcp_server
+Run:  python -m confuzz.mcp_server --http --port 8800   # TrueForge: remote MCP URL http://127.0.0.1:8800/mcp
+      python -m confuzz.mcp_server                       # stdio (local clients, tests)
 Env:  CONFUZZ_STATE=/path/state.json  (persisted session; survives restarts)
+
+TrueForge connects to remote MCP servers by URL only (Streamable HTTP or SSE) and its outbound
+URL guard blocks loopback addresses unless allowed: start TrueForge with
+  OUTBOUND_URL_ALLOWED_HOSTS='["127.0.0.1"]'
+(verified against trueforge main @ 1090880, packages/trueforge-core/src/core/util/ssrfGuard.ts).
 
 Hidden ground truth is never reachable from here (tests/test_isolation.py checks the imports).
 Works with the MCP Python SDK 1.x (FastMCP) and 2.x (MCPServer).
@@ -154,7 +160,20 @@ def reset_session(world_id: str = "demo", budget: int = 20, attack_budget: int =
 
 
 def main():
-    mcp.run()
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--http", action="store_true", help="serve Streamable HTTP instead of stdio")
+    ap.add_argument("--host", default="127.0.0.1")
+    ap.add_argument("--port", type=int, default=8800)
+    a = ap.parse_args()
+    if not a.http:
+        mcp.run()
+        return
+    try:  # mcp 2.x
+        mcp.run("streamable-http", host=a.host, port=a.port)
+    except TypeError:  # mcp 1.x: host/port live on settings
+        mcp.settings.host, mcp.settings.port = a.host, a.port
+        mcp.run("streamable-http")
 
 
 if __name__ == "__main__":
