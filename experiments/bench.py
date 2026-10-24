@@ -25,7 +25,8 @@ from confuzz.groundtruth import ground_truth  # noqa: E402
 from confuzz.search import (AcquisitionPolicy, AdaptiveGroupTesting, GroupTestingAcquisition, RandomPolicy,  # noqa: E402
                             RandomPrunedPolicy, SemanticPrior, SizeOrderedPolicy, episode_metrics, recall_curve,
                             run_episode)
-from confuzz.world import DEV_START, FROZEN_START, frozen_worlds  # noqa: E402
+from confuzz.benchmark_worlds import frozen_worlds
+from confuzz.world import DEV_START, FROZEN_START  # noqa: E402
 
 BUDGETS = [5, 10, 15, 20, 25, 30]
 

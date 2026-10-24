@@ -1,0 +1,453 @@
+[
+ {
+  "t": 1792867972.79,
+  "actor": "SCORER",
+  "kind": "rank",
+  "top": [
+   "D1",
+   "D2",
+   "D3",
+   "D4",
+   "D5",
+   "D6",
+   "D7",
+   "D8"
+  ],
+  "score": 10.5,
+  "covers": 84,
+  "uses_llm_prior": false
+ },
+ {
+  "t": 1792867972.79,
+  "actor": "RED",
+  "kind": "simulate",
+  "index": 1,
+  "perturbation": [
+   "D1",
+   "D2",
+   "D3",
+   "D4",
+   "D5",
+   "D6",
+   "D7",
+   "D8"
+  ],
+  "purpose": "test",
+  "critical": true,
+  "violations": [
+   "av",
+   "accessibility",
+   "av",
+   "accessibility",
+   "capacity",
+   "av",
+   "accessibility",
+   "capacity",
+   "accessibility"
+  ]
+ },
+ {
+  "t": 1792867972.8,
+  "actor": "ENGINE",
+  "kind": "phase",
+  "from_": "DISCOVER",
+  "to": "REPRODUCE"
+ },
+ {
+  "t": 1792867972.8,
+  "actor": "RED",
+  "kind": "simulate",
+  "index": 2,
+  "perturbation": [
+   "D2",
+   "D3",
+   "D4",
+   "D5",
+   "D6",
+   "D7",
+   "D8"
+  ],
+  "purpose": "minimize",
+  "critical": true,
+  "violations": [
+   "av",
+   "accessibility",
+   "av",
+   "accessibility",
+   "av",
+   "accessibility",
+   "capacity",
+   "accessibility"
+  ]
+ },
+ {
+  "t": 1792867972.8,
+  "actor": "RED",
+  "kind": "simulate",
+  "index": 3,
+  "perturbation": [
+   "D3",
+   "D4",
+   "D5",
+   "D6",
+   "D7",
+   "D8"
+  ],
+  "purpose": "minimize",
+  "critical": true,
+  "violations": [
+   "av",
+   "av",
+   "av"
+  ]
+ },
+ {
+  "t": 1792867972.8,
+  "actor": "RED",
+  "kind": "simulate",
+  "index": 4,
+  "perturbation": [
+   "D4",
+   "D5",
+   "D6",
+   "D7",
+   "D8"
+  ],
+  "purpose": "minimize",
+  "critical": false,
+  "violations": []
+ },
+ {
+  "t": 1792867972.8,
+  "actor": "RED",
+  "kind": "simulate",
+  "index": 5,
+  "perturbation": [
+   "D3",
+   "D5",
+   "D6",
+   "D7",
+   "D8"
+  ],
+  "purpose": "minimize",
+  "critical": true,
+  "violations": [
+   "av",
+   "av",
+   "av"
+  ]
+ },
+ {
+  "t": 1792867972.8,
+  "actor": "RED",
+  "kind": "simulate",
+  "index": 6,
+  "perturbation": [
+   "D3",
+   "D6",
+   "D7",
+   "D8"
+  ],
+  "purpose": "minimize",
+  "critical": false,
+  "violations": []
+ },
+ {
+  "t": 1792867972.8,
+  "actor": "RED",
+  "kind": "simulate",
+  "index": 7,
+  "perturbation": [
+   "D3",
+   "D5",
+   "D7",
+   "D8"
+  ],
+  "purpose": "minimize",
+  "critical": false,
+  "violations": []
+ },
+ {
+  "t": 1792867972.8,
+  "actor": "RED",
+  "kind": "simulate",
+  "index": 8,
+  "perturbation": [
+   "D3",
+   "D5",
+   "D6",
+   "D8"
+  ],
+  "purpose": "minimize",
+  "critical": true,
+  "violations": [
+   "av",
+   "av",
+   "av"
+  ]
+ },
+ {
+  "t": 1792867972.8,
+  "actor": "RED",
+  "kind": "simulate",
+  "index": 9,
+  "perturbation": [
+   "D3",
+   "D5",
+   "D6"
+  ],
+  "purpose": "minimize",
+  "critical": true,
+  "violations": [
+   "av",
+   "av",
+   "av"
+  ]
+ },
+ {
+  "t": 1792867972.8,
+  "actor": "ENGINE",
+  "kind": "minimal_failure",
+  "failure_id": "F1",
+  "minimal_set": [
+   "D3",
+   "D5",
+   "D6"
+  ],
+  "order": 3,
+  "violations": [
+   "av",
+   "av",
+   "av"
+  ]
+ },
+ {
+  "t": 1792867972.8,
+  "actor": "ENGINE",
+  "kind": "phase",
+  "from_": "REPRODUCE",
+  "to": "REPAIR"
+ },
+ {
+  "t": 1792867972.8,
+  "actor": "RED",
+  "kind": "simulate",
+  "index": 10,
+  "perturbation": [
+   "D1",
+   "D2",
+   "D4"
+  ],
+  "purpose": "test",
+  "critical": true,
+  "violations": [
+   "transition"
+  ]
+ },
+ {
+  "t": 1792867972.81,
+  "actor": "ENGINE",
+  "kind": "phase",
+  "from_": "REPAIR",
+  "to": "REPRODUCE"
+ },
+ {
+  "t": 1792867972.81,
+  "actor": "RED",
+  "kind": "simulate",
+  "index": 11,
+  "perturbation": [
+   "D2",
+   "D4"
+  ],
+  "purpose": "minimize",
+  "critical": false,
+  "violations": []
+ },
+ {
+  "t": 1792867972.81,
+  "actor": "RED",
+  "kind": "simulate",
+  "index": 12,
+  "perturbation": [
+   "D1",
+   "D4"
+  ],
+  "purpose": "minimize",
+  "critical": false,
+  "violations": []
+ },
+ {
+  "t": 1792867972.81,
+  "actor": "RED",
+  "kind": "simulate",
+  "index": 13,
+  "perturbation": [
+   "D1",
+   "D2"
+  ],
+  "purpose": "minimize",
+  "critical": false,
+  "violations": []
+ },
+ {
+  "t": 1792867972.81,
+  "actor": "ENGINE",
+  "kind": "minimal_failure",
+  "failure_id": "F2",
+  "minimal_set": [
+   "D1",
+   "D2",
+   "D4"
+  ],
+  "order": 3,
+  "violations": [
+   "transition"
+  ]
+ },
+ {
+  "t": 1792867972.81,
+  "actor": "ENGINE",
+  "kind": "phase",
+  "from_": "REPRODUCE",
+  "to": "REPAIR"
+ },
+ {
+  "t": 1792867972.81,
+  "actor": "ENGINE",
+  "kind": "simulate",
+  "index": 14,
+  "perturbation": [
+   "D1"
+  ],
+  "purpose": "explain",
+  "critical": false,
+  "violations": []
+ },
+ {
+  "t": 1792867972.81,
+  "actor": "ENGINE",
+  "kind": "simulate",
+  "index": 15,
+  "perturbation": [
+   "D2"
+  ],
+  "purpose": "explain",
+  "critical": false,
+  "violations": []
+ },
+ {
+  "t": 1792867972.81,
+  "actor": "ENGINE",
+  "kind": "simulate",
+  "index": 16,
+  "perturbation": [
+   "D4"
+  ],
+  "purpose": "explain",
+  "critical": false,
+  "violations": []
+ },
+ {
+  "t": 1792867972.82,
+  "actor": "BLUE",
+  "kind": "repair_proposed",
+  "repair_id": "R1",
+  "actions": [
+   "swap rooms of S10 and S12"
+  ],
+  "cost": 2.0,
+  "revision": false
+ },
+ {
+  "t": 1792867972.82,
+  "actor": "ENGINE",
+  "kind": "phase",
+  "from_": "REPAIR",
+  "to": "ATTACK"
+ },
+ {
+  "t": 1792867972.83,
+  "actor": "CRITIC",
+  "kind": "attack",
+  "repair_id": "R1",
+  "perturbation": [
+   "D4"
+  ],
+  "counterexample": true,
+  "violations": [
+   "transition"
+  ]
+ },
+ {
+  "t": 1792867972.83,
+  "actor": "ENGINE",
+  "kind": "repair_rejected",
+  "repair_id": "R1",
+  "counterexample": [
+   "D4"
+  ]
+ },
+ {
+  "t": 1792867972.83,
+  "actor": "ENGINE",
+  "kind": "phase",
+  "from_": "ATTACK",
+  "to": "REPAIR"
+ },
+ {
+  "t": 1792867972.83,
+  "actor": "BLUE",
+  "kind": "repair_proposed",
+  "repair_id": "R2",
+  "actions": [
+   "activate standby room F",
+   "move S07 to room F"
+  ],
+  "cost": 6.0,
+  "revision": true
+ },
+ {
+  "t": 1792867972.83,
+  "actor": "ENGINE",
+  "kind": "phase",
+  "from_": "REPAIR",
+  "to": "ATTACK"
+ },
+ {
+  "t": 1792867972.84,
+  "actor": "CRITIC",
+  "kind": "attack",
+  "repair_id": "R2",
+  "perturbation": [
+   "D2",
+   "D3",
+   "D6"
+  ],
+  "counterexample": false,
+  "violations": []
+ },
+ {
+  "t": 1792867972.84,
+  "actor": "ENGINE",
+  "kind": "phase",
+  "from_": "ATTACK",
+  "to": "VERIFY"
+ },
+ {
+  "t": 1792867972.95,
+  "actor": "RISK",
+  "kind": "certificate",
+  "repair_id": "R2",
+  "status": "VERIFIED_ON_TEST_SET",
+  "regressions": 0,
+  "failure_rate_after": 0.2025
+ },
+ {
+  "t": 1792867972.95,
+  "actor": "ENGINE",
+  "kind": "phase",
+  "from_": "VERIFY",
+  "to": "APPROVE"
+ }
+]

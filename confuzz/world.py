@@ -278,18 +278,3 @@ def generate_world(seed: int) -> World | None:
 
 FROZEN_START = 0
 DEV_START = 50_000_000
-
-
-def frozen_worlds(n: int = 20, start_seed: int = FROZEN_START) -> list[World]:
-    """First n accepted worlds scanning seeds upward from start_seed.
-    Frozen set: start_seed=FROZEN_START. Development set: start_seed=DEV_START.
-    The ranges are far apart so the two sets can never share a seed."""
-    from .groundtruth import ground_truth
-
-    out, seed = [], start_seed
-    while len(out) < n:
-        w = generate_world(seed)
-        if w is not None and ground_truth(w).minimal_sets:
-            out.append(w)
-        seed += 1
-    return out

@@ -35,7 +35,7 @@ def cvar(losses: list[float], alpha: float = 0.95) -> tuple[float, int]:
     """CVaR_alpha = mean of the worst ceil((1 - alpha) * n) losses. Returns (value, tail size)."""
     if not losses:
         return 0.0, 0
-    k = max(1, math.ceil((1 - alpha) * len(losses)))
+    k = max(1, math.ceil(round((1 - alpha) * len(losses), 9)))  # round: (1-0.95)*100 = 5.000000000000004
     tail = sorted(losses, reverse=True)[:k]
     return float(np.mean(tail)), k
 
