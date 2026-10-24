@@ -111,10 +111,16 @@ def raw_evidence(original: World, patched: World, n: int = 400, seed: int = 7, n
     draws = []
     for p, dn in sampled_draws(original, n, seed, noise):
         rb, ra = simulate(original, p, dn), simulate(patched, p, dn)
-        draws.append({"perturbation": sorted(p), "fails_before": rb.critical, "fails_after": ra.critical,
+        draws.append({"perturbation": sorted(p), "max_demand_deviation": round(max(abs(v - 1) for v in dn.values()), 4),
+                      "mean_demand_factor": round(sum(dn.values()) / len(dn), 4),
+                      "fails_before": rb.critical, "fails_after": ra.critical,
+                      "violated_after": sorted({v["constraint"] for v in ra.violations}),
                       "severity_before": round(rb.severity, 6), "severity_after": round(ra.severity, 6),
                       "accessibility_after": any(v["constraint"] == "accessibility" for v in ra.violations)})
     return {"exact_rows": exact_rows, "sampled_draws": draws,
+            "analysis_ideas": ("residual-risk drivers: for each disruption id, failure rate after among draws that include it vs exclude it; "
+                               "demand envelope: failure rate after by mean_demand_factor bucket, i.e. how far demand can move before the "
+                               "fix stops holding; which constraints the residual failures violate"),
             "how_to_check": ("regression = fails_after and not fails_before over exact_rows; failure rate = mean(fails_after) "
                              "over sampled_draws; 95% one-sided Clopper-Pearson upper bound for x failures in n trials = "
                              "the p solving P(Binomial(n, p) <= x) = 0.05; CVaR95 = mean of the worst ceil(0.05 n) severities")}

@@ -52,11 +52,17 @@ PHASE 3 ATTACK (CRITIC subagent)
 PHASE 4 VERIFY
   Call verify_repair on the surviving repair. Report exactly what it returned.
   If the sandbox is enabled: call export_evidence for that repair (the large result lands in a sandbox
-  file), then WRITE AND RUN your own Python in the sandbox that recomputes, from the raw rows, the
-  regression count, the failing perturbations before/after, the sampled failure rate and the 95%
-  one-sided Clopper-Pearson upper bound (standard library only: binary search on the binomial CDF),
-  and compares each to the certificate's claims. Report any mismatch as a blocker. If the sandbox is
-  not enabled, say "independent recomputation skipped: no sandbox" and continue.
+  file), then WRITE AND RUN your own Python in the sandbox (standard library only) that produces three
+  things the certificate does not contain:
+    1. CHECK: recompute the regression count, failing before/after, sampled failure rate and the 95%
+       one-sided Clopper-Pearson upper bound (binary search on the binomial CDF) and compare each to
+       the certificate's claims. Any mismatch is a blocker.
+    2. RESIDUAL-RISK DRIVERS: for each disruption, the failure rate after the fix among draws that
+       include it vs exclude it. Name the top two drivers of what is still at risk.
+    3. DEMAND ENVELOPE: failure rate after the fix by demand bucket (mean_demand_factor), so the operator
+       knows how far demand can move before the fix stops holding.
+  Put all three in the approval card. If the sandbox is not enabled, say "sandbox analysis skipped:
+  no sandbox" and continue.
 
 PHASE 5 APPROVE (human)
   Only if verify_repair returned VERIFIED_ON_TEST_SET, call apply_repair. evidence_summary is what the
@@ -67,7 +73,7 @@ PHASE 5 APPROVE (human)
     CRITIC ATTACKS that the fix survived
     EXACT RESULT over all modeled disruption combinations (regressions, failing before -> after)
     SAMPLED RESULT under demand uncertainty (failure rate before -> after, 95% upper bound)
-    SANDBOX RECOMPUTATION result, or that it was skipped
+    SANDBOX ANALYSIS: recomputation check, top residual-risk drivers, demand envelope (or that it was skipped)
     WHAT IS STILL AT RISK: residual failures remain; the model covers 8 disruptions; assumes the playbook is followed
   If the organizer denies, do not retry the same repair; ask BLUE for an alternative or stop.
 

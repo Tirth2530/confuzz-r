@@ -28,6 +28,35 @@ through until it has been attacked and verified:
 Every rule that matters (budgets, phase order, "no apply without verification") is enforced in the
 tool server, not in a prompt. The model reasons; the harness decides what it is allowed to do.
 
+**Category:** a verification gateway between autonomous operations agents and real systems.
+CI/CD verifies code before it ships. CONFUZZ-R verifies an agent's operational change before it is applied.
+
+```
+        AI AGENTS (propose changes)
+                  |
+        +-------------------+
+        |     CONFUZZ-R     |   attack  ->  verify  ->  certify  ->  approval eligibility
+        +-------------------+
+                  |
+        TrueForge approval gate  ->  human  ->  REAL SYSTEMS
+```
+
+## The proof package: an Operational Safety Certificate
+
+Every change that reaches a human ships with one (today: `verify_repair` + `export_evidence` + the approval card):
+the change and its target; the incident's minimal cause; repairs rejected and the counterexample that
+killed each; the space tested (all 256 modeled combinations); regressions found (must be 0); residual
+failures that remain; a sampled failure bound under demand uncertainty; the agent's own sandbox analysis
+(top residual-risk drivers, demand envelope); model assumptions; and who approved it.
+
+## Three modes
+
+- **Incident commander (built):** something broke; find a fix, attack it, verify it, gate it.
+- **Preflight (same engine):** an agent proposes a change with nothing broken yet; attack it before it ships.
+- **Watchdog (next):** the certificate records the conditions it was verified under (modeled disruptions,
+  demand band). When live conditions leave that envelope, the certificate is invalidated and the change
+  is sent back for re-verification. This turns a one-time check into continuous assurance.
+
 ## Proven today: one engine, two domains
 
 | | Conference operations | Inventory network |
@@ -57,10 +86,18 @@ reused unchanged (`confuzz/domain.py` is the whole dispatch layer).
    that, verification becomes budgeted adversarial search with statistical bounds, which is where the
    Critic's measured advantage matters most. Our benchmarks already measure methods by queries spent,
    not by whether enumeration is possible.
-3. **More domains with the same shape:** hospital shift coverage, airline and rail disruption recovery,
-   cloud change management (a config change that fixes one service and removes another's failover).
+3. **Next markets, in order:** cloud infrastructure and SRE (an agent shifts traffic to region B; what if
+   B loses a zone?), airline and rail recovery (an aircraft swap fixes one flight and times out a crew
+   three hours later), hospital operations (a nurse reassignment fixes one unit and breaks ICU coverage
+   under two admissions). Same four inputs each time: system state, disruptions, invariants, actions.
 4. **A hybrid Critic.** Our pre-registered data shows deterministic locality heuristics are strong on
    direct regressions and blind on indirect ones; the product Critic routes between them.
+
+## Where this ends up
+
+Organizations will run many agents that change live systems: stock, schedules, infrastructure, staffing,
+routing. Something has to sit between an agent's intention and a real-world action, try to break the
+change, and refuse to pass it on without evidence. That is CONFUZZ-R.
 
 ## Why TrueForge and OpenAI are structural
 
