@@ -18,7 +18,7 @@ import time
 from dataclasses import asdict
 from pathlib import Path
 
-from .certificate import risk_certificate
+from .certificate import raw_evidence, risk_certificate
 from .repair import ACTION_TYPES, Action, apply_actions, instantiate_plan
 from .search import AdaptiveGroupTesting, SemanticPrior, candidates as _candidates, Oracle
 from .sim import simulate
@@ -335,6 +335,32 @@ class Session:
         return {"applied": rid, "actions": r["described"],
                 "active_schedule_changed": True,
                 "note": "executed only because the human approved this tool call in TrueForge"}
+
+    def evidence(self, rid: str) -> dict:
+        """Raw rows behind a repair's certificate (read-only; for independent recomputation)."""
+        r = self.repair(rid)
+        if not r.get("certificate"):
+            raise RuleViolation(f"repair {rid} has no certificate yet; call verify_repair first")
+        ev = raw_evidence(self.base_world() if r["status"] != "APPLIED" else self._pre_apply_world(rid),
+                          self.patched_world(rid) if r["status"] != "APPLIED" else self.base_world(),
+                          seed=self.s["seed"] + 7)
+        self.event("ENGINE", "evidence_exported", repair_id=rid, rows=len(ev["exact_rows"]), draws=len(ev["sampled_draws"]))
+        cert = r["certificate"]
+        return {"repair_id": rid, "certificate_claims": {
+                    "status": cert["status"],
+                    "regression_count": cert["exact_bounded_space"]["regression_count"],
+                    "failing_before": cert["exact_bounded_space"]["failing_perturbations_before"],
+                    "failing_after": cert["exact_bounded_space"]["failing_perturbations_after"],
+                    **{k: v for k, v in cert["sampled_demand_uncertainty"].items() if k not in ("process", "same_condition")}},
+                **ev}
+
+    def _pre_apply_world(self, rid: str) -> World:
+        w = load_world(self.s["world_id"])
+        for x in self.s["applied"]:
+            if x == rid:
+                break
+            w = apply_actions(w, [Action(**a) for a in self.repair(x)["actions"]])
+        return w
 
     def trace(self) -> list[dict]:
         return self.s["events"]

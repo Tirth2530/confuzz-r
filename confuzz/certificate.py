@@ -98,3 +98,23 @@ def risk_certificate(original: World, patched: World, targets: list[frozenset[st
             "no claim about disruptions, constraints or attendee behavior outside the model",
         ],
     }
+
+
+def raw_evidence(original: World, patched: World, n: int = 400, seed: int = 7, noise: float = 0.10) -> dict:
+    """The rows behind risk_certificate, so an independent agent can recompute every number.
+    Uses the same perturbations, seeds and demand draws as risk_certificate with the same arguments."""
+    from .space import all_perturbations
+    exact_rows = []
+    for p in all_perturbations(original.disruption_ids):
+        exact_rows.append({"perturbation": sorted(p), "fails_before": simulate(original, p).critical,
+                           "fails_after": simulate(patched, p).critical})
+    draws = []
+    for p, dn in sampled_draws(original, n, seed, noise):
+        rb, ra = simulate(original, p, dn), simulate(patched, p, dn)
+        draws.append({"perturbation": sorted(p), "fails_before": rb.critical, "fails_after": ra.critical,
+                      "severity_before": round(rb.severity, 6), "severity_after": round(ra.severity, 6),
+                      "accessibility_after": any(v["constraint"] == "accessibility" for v in ra.violations)})
+    return {"exact_rows": exact_rows, "sampled_draws": draws,
+            "how_to_check": ("regression = fails_after and not fails_before over exact_rows; failure rate = mean(fails_after) "
+                             "over sampled_draws; 95% one-sided Clopper-Pearson upper bound for x failures in n trials = "
+                             "the p solving P(Binomial(n, p) <= x) = 0.05; CVaR95 = mean of the worst ceil(0.05 n) severities")}

@@ -165,6 +165,22 @@ class TestSessionRules(unittest.TestCase):
             s.query(["D2"], "test", "RED")
 
 
+class TestEvidence(unittest.TestCase):
+    def test_evidence_recomputes_certificate(self):
+        import math
+        s = Session.new("demo", budget=20)
+        s.minimize(["D1", "D2", "D4"])
+        s.propose_repair(["F1"], [{"type": "ACTIVATE_STANDBY", "room": "F"}, {"type": "MOVE_SESSION", "session": "S07"}], "t", None)
+        s.attack("R1", ["D2", "D3", "D6"], "t", "accessibility")
+        s.verify("R1")
+        e = s.evidence("R1")
+        c = e["certificate_claims"]
+        self.assertEqual(sum(r["fails_after"] and not r["fails_before"] for r in e["exact_rows"]), c["regression_count"])
+        self.assertEqual(sum(r["fails_after"] for r in e["exact_rows"]), c["failing_after"])
+        d = e["sampled_draws"]
+        self.assertAlmostEqual(sum(r["fails_after"] for r in d) / len(d), c["failure_rate_after"], places=4)
+
+
 class TestIsolation(unittest.TestCase):
     AGENT_FACING = ["mcp_server.py", "session.py", "search.py", "repair.py", "certificate.py", "sim.py", "world.py", "llm.py", "space.py"]
 

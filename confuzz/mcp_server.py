@@ -156,6 +156,14 @@ def apply_repair(repair_id: str, evidence_summary: str) -> str:
 
 
 @mcp.tool(annotations=READ)
+def export_evidence(repair_id: str) -> str:
+    """Raw evidence behind a repair's certificate: all 256 exact rows (fails before/after) and every
+    sampled demand draw (fails before/after, severities), plus the certificate's claimed numbers.
+    Use it to recompute the certificate independently, e.g. with your own code in the sandbox."""
+    return _run(lambda s: s.evidence(repair_id))
+
+
+@mcp.tool(annotations=READ)
 def get_trace() -> str:
     """Full event trace of this session: who (RED, SCORER, ENGINE, BLUE, CRITIC, RISK, HUMAN) did what."""
     return _run(lambda s: s.trace())

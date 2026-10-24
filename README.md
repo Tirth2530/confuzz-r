@@ -30,6 +30,7 @@ python experiments/figures.py experiments/results/v3_frozen.json
 OPENAI_API_KEY=... python experiments/critic_bench.py --split frozen \
     --conditions random,size_ordered,diff_guided,openai_critic --tag critic_frozen          # run ONCE
 ```
+Demo script: `trueforge/DEMO.md`. Permission boundary: `trueforge/WHERE_IT_STOPS.md`. Checkpoint: `trueforge/CHECKPOINT.md`.
 TrueForge wiring (verified against TrueForge source; HTTP MCP, loopback allowlist, approval defaults): `trueforge/SETUP.md`. Agent instructions: `trueforge/AGENT_INSTRUCTIONS.md`.
 
 ## Problem and definitions
